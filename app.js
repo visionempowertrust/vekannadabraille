@@ -259,6 +259,63 @@ function ui(key, fallback) {
   return textMode === "kn" ? kannadaUi[key] || fallback : fallback;
 }
 
+function regionalMode() {
+  return textMode === "kn";
+}
+
+function displayLessonTitle(lesson) {
+  if (!regionalMode()) return lesson.title;
+  if (lesson.slug === "vowels-reading-order") return ui("vowels", "Vowels");
+  if (lesson.slug === "marks") return ui("marks", "Marks");
+  if (lesson.slug === "words-sentences") return ui("practiceSets", "Practice sets");
+  const letters = lesson.focus.filter((item) => !["1", "2", "3", ".", "?"].includes(item));
+  return `${ui("consonants", "Consonants")}: ${letters[0]} - ${letters[Math.min(letters.length - 1, 4)]}`;
+}
+
+function displayLessonSummary(lesson) {
+  if (!regionalMode()) return lesson.summary;
+  if (lesson.slug === "vowels-reading-order") return ui("pathCopy", lesson.summary);
+  if (lesson.slug === "marks") return ui("chartCopy", lesson.summary);
+  return ui("practice", "Practice this workshop");
+}
+
+function displayLessonIntroduction(lesson) {
+  if (!regionalMode()) return lesson.introduction;
+  return `${displayLessonTitle(lesson)}. ${ui("oneAtATime", "Learn one cell at a time")}. ${ui("practice", "Practice this workshop")}.`;
+}
+
+function displayObjectives(lesson) {
+  if (!regionalMode()) return lesson.objectives;
+  return [ui("oneAtATime", "Learn one cell at a time"), ui("practice", "Practice this workshop"), ui("chartCopy", "Bharati Braille writes vowels as full braille letters after the consonant sound.")];
+}
+
+function displayPracticeTitle(set, index) {
+  return regionalMode() ? `${ui("practiceSets", "Practice sets")} ${index + 1}` : set.title;
+}
+
+function displayPracticeInstruction(set) {
+  return regionalMode() ? ui("practice", "Practice this workshop") : set.instruction;
+}
+
+function displayMeta(lesson) {
+  return regionalMode() ? `${lesson.practiceSets.length} ${ui("practiceSets", "Practice sets")}` : `${lesson.practiceSets.length} sets`;
+}
+
+function displayTime(lesson) {
+  return regionalMode() ? lesson.time.match(/\d+/)?.[0] || lesson.time : lesson.time;
+}
+
+function displayChartLabel(label, group) {
+  if (!regionalMode()) return label;
+  if (group === "vowel") return ui("vowels", "Vowels");
+  if (group === "consonant") return ui("consonants", "Consonants");
+  return ui("marks", "Marks");
+}
+
+function displayDotLabel(dots) {
+  return regionalMode() ? `• ${dots}` : `dots ${dots}`;
+}
+
 function makeLanguageToggle() {
   const nav = document.querySelector("nav");
   if (!nav) return;
@@ -282,6 +339,8 @@ function makeLanguageToggle() {
 
 function updateLanguageToggle() {
   document.querySelectorAll("[data-text-mode]").forEach((button) => {
+    if (button.dataset.textMode === "en") button.textContent = textMode === "kn" ? "A" : "English";
+    if (button.dataset.textMode === "kn") button.textContent = "ಕನ್ನಡ";
     button.classList.toggle("active", button.dataset.textMode === textMode);
   });
 }
@@ -292,6 +351,9 @@ function setupPageText() {
     if (link.getAttribute("href") === "#chart") link.textContent = ui("chart", "Chart");
     if (link.getAttribute("href") === "#sandbox") link.textContent = ui("sandbox", "Sandbox");
   });
+  const brandText = document.querySelector(".brand > span:not(.brand-mark)");
+  if (brandText) brandText.textContent = regionalMode() ? "ಕನ್ನಡ" : "Kannada Braille by Sight";
+  document.querySelector(".hero .eyebrow").textContent = regionalMode() ? "ಭಾರತೀ ಬ್ರೈಲ್ ಆರಂಭಿಕ ಪಾಠ" : "Bharati Braille starter course";
   document.querySelector("#hero-title").textContent = ui("hero", "Learn Kannada Braille by seeing");
   document.querySelector(".hero-copy p:last-child").textContent = ui("heroCopy", "A workshop-style website for sighted learners who want to recognize Kannada braille cells, understand the writing order, and build confidence one group at a time.");
   document.querySelector("#path-title").textContent = ui("path", "Suggested path");
@@ -304,6 +366,35 @@ function setupPageText() {
   document.querySelector("[data-chart-filter='vowel']").textContent = ui("vowels", "Vowels");
   document.querySelector("[data-chart-filter='consonant']").textContent = ui("consonants", "Consonants");
   document.querySelector("[data-chart-filter='mark']").textContent = ui("marks", "Marks");
+  document.querySelector("#series .eyebrow").textContent = regionalMode() ? "ಕಾರ್ಯಾಗಾರ ಸರಣಿ" : "Workshop series";
+  document.querySelector("#series h2").textContent = regionalMode() ? "ಸಣ್ಣ ಗುಂಪುಗಳಲ್ಲಿ ಗುರುತಿಸುವಿಕೆಯನ್ನು ಬೆಳೆಸಿರಿ" : "Build recognition in small sets";
+  document.querySelector("#workshops .eyebrow").textContent = regionalMode() ? "ಪೂರ್ಣ ಕಾರ್ಯಾಗಾರಗಳು" : "Full workshops";
+  document.querySelector("#workshops-title").textContent = ui("workshops", "Workshops");
+  document.querySelector("#workshops .section-heading p:not(.eyebrow)").textContent = regionalMode() ? "ಪ್ರತಿ ಕಾರ್ಯಾಗಾರದಲ್ಲಿ ಒಂದು ಸೆಲ್ ಕಲಿದು, ನಂತರ ಅದೇ ವಿಭಾಗವನ್ನು ಅಭ್ಯಾಸ ಮಾಡಿ." : "Each workshop is organized for sighted reading: first notice the cell shape, then name the Kannada print, then read short sequences with increasing confidence.";
+  document.querySelector("#chart .eyebrow").textContent = regionalMode() ? "ಪಟ್ಟಿ" : "Reference chart";
+  document.querySelector("#sandbox .eyebrow").textContent = regionalMode() ? "ಅಭ್ಯಾಸ ಪೆಟ್ಟಿಗೆ" : "Sandbox";
+  document.querySelector("#sandbox .section-heading h2").textContent = ui("sandbox", "Explore print-to-braille order");
+  const statItems = document.querySelectorAll(".stats span");
+  if (regionalMode() && statItems.length >= 3) {
+    statItems[0].innerHTML = `<strong>8</strong> ${ui("workshops", "Workshops")}`;
+    statItems[1].innerHTML = `<strong>6</strong>`;
+    statItems[2].innerHTML = `<strong>1</strong>`;
+  } else if (statItems.length >= 3) {
+    statItems[0].innerHTML = `<strong>8</strong> workshops`;
+    statItems[1].innerHTML = `<strong>6-dot</strong> cells`;
+    statItems[2].innerHTML = `<strong>Grade 1</strong> Kannada`;
+  }
+  document.querySelector("#notes-title").textContent = regionalMode() ? "ಶಿಕ್ಷಕರ ಟಿಪ್ಪಣಿಗಳು" : "Teacher notes";
+  const noteArticles = document.querySelectorAll(".note-grid article");
+  if (noteArticles.length >= 3) {
+    noteArticles[0].querySelector("h3").textContent = regionalMode() ? "ಈ ಮಾದರಿ" : "What this prototype does";
+    noteArticles[0].querySelector("p").textContent = regionalMode() ? "ಕಾರ್ಯಾಗಾರಗಳು, ಪಟ್ಟಿ, ಅಭ್ಯಾಸ ಮತ್ತು ಪ್ರಯೋಗ ಪೆಟ್ಟಿಗೆಯನ್ನು ಒದಗಿಸುತ್ತದೆ." : "Presents a complete public-facing course shell, usable chart, random recognition practice, and a simple Kannada braille exploration tool.";
+    noteArticles[1].querySelector("h3").textContent = regionalMode() ? "ಪರಿಶೀಲನೆ ಬೇಕು" : "What to verify";
+    noteArticles[1].querySelector("p").textContent = regionalMode() ? "ಉತ್ಪಾದನಾ ಬಳಕೆಗೆ ಮೊದಲು ಅರ್ಹ ಬ್ರೈಲ್ ಶಿಕ್ಷಕರಿಂದ ಪರಿಶೀಲಿಸಬೇಕು." : "The starter data follows publicly described Kannada/Bharati Braille conventions and should be reviewed by a qualified Kannada Braille educator before production use.";
+    noteArticles[2].querySelector("h3").textContent = regionalMode() ? "ಆಧಾರ" : "Source basis";
+    noteArticles[2].querySelector("p").textContent = regionalMode() ? "ದೃಷ್ಟಿ-ಓದು ಕಾರ್ಯಾಗಾರ ರಚನೆ ಮತ್ತು ಸಾರ್ವಜನಿಕ ಬ್ರೈಲ್ ಉಲ್ಲೇಖಗಳ ಆಧಾರ." : "Structure inspired by Hadley's sight-reading workshop page. Braille conventions are based on public Kannada and Bharati Braille references.";
+  }
+  document.querySelector(".site-footer span").textContent = regionalMode() ? "ಕನ್ನಡ" : "Kannada Braille by Sight prototype";
   document.querySelector(".site-footer a").textContent = ui("back", "Back to top");
   updateLanguageToggle();
 }
@@ -360,12 +451,12 @@ function renderLessons() {
     <article class="workshop-card" id="card-${lesson.slug}">
       <span class="workshop-icon" aria-hidden="true">${lesson.icon}</span>
       <div>
-        <h3>${lesson.title}</h3>
-        <p>${lesson.summary}</p>
+        <h3>${displayLessonTitle(lesson)}</h3>
+        <p>${displayLessonSummary(lesson)}</p>
       </div>
       <div class="workshop-meta">
-        <a href="#${lesson.slug}">Practice</a>
-        <span>${lesson.practiceSets.length} sets</span>
+        <a href="#${lesson.slug}">${ui("practice", "Practice")}</a>
+        <span>${displayMeta(lesson)}</span>
       </div>
     </article>
   `).join("");
@@ -376,13 +467,13 @@ function renderWorkshopDetails() {
     <article class="workshop-detail" id="${lesson.slug}">
       <div class="workshop-detail-header">
         <div>
-          <p class="eyebrow">Workshop ${index + 1}</p>
-          <h3>${lesson.title}</h3>
-          <p>${lesson.introduction}</p>
+          <p class="eyebrow">${ui("workshops", "Workshop")} ${index + 1}</p>
+          <h3>${displayLessonTitle(lesson)}</h3>
+          <p>${displayLessonIntroduction(lesson)}</p>
         </div>
         <div class="workshop-badge" aria-hidden="true">
           <span>${lesson.icon}</span>
-          <strong>${lesson.time}</strong>
+          <strong>${displayTime(lesson)}</strong>
         </div>
       </div>
 
@@ -390,7 +481,7 @@ function renderWorkshopDetails() {
         <section aria-label="${lesson.title} objectives">
           <h4>${ui("goals", "Learning goals")}</h4>
           <ul class="objective-list">
-            ${lesson.objectives.map((objective) => `<li>${objective}</li>`).join("")}
+            ${displayObjectives(lesson).map((objective) => `<li>${objective}</li>`).join("")}
           </ul>
         </section>
         <section class="cell-stepper" data-cell-stepper="${lesson.slug}" aria-label="${lesson.title} cell lesson" aria-live="polite">
@@ -441,11 +532,11 @@ function renderChart(filter = "all") {
     .filter((item) => filter === "all" || item[4] === filter)
     .map(([print, label, braille, dots, group]) => `
       <article class="chart-card" data-group="${group}">
-        <span class="chart-braille" aria-label="Braille ${dots}">${renderBrailleCells(braille)}</span>
+        <span class="chart-braille" aria-label="${displayDotLabel(dots)}">${renderBrailleCells(braille)}</span>
         <div>
           <h3>${print}</h3>
-          <p>${label}</p>
-          <p>dots ${dots}</p>
+          <p>${displayChartLabel(label, group)}</p>
+          <p>${displayDotLabel(dots)}</p>
         </div>
       </article>
     `).join("");
@@ -462,7 +553,7 @@ function renderCellStep(slug) {
   if (!lesson || !stepper) return;
 
   const item = lesson.focus[index];
-  stepper.querySelector(".cell-step-count").textContent = `${index + 1} of ${lesson.focus.length}`;
+  stepper.querySelector(".cell-step-count").textContent = regionalMode() ? `${index + 1} / ${lesson.focus.length}` : `${index + 1} of ${lesson.focus.length}`;
   stepper.querySelector(".cell-step-print").textContent = item;
   stepper.querySelector(".cell-step-braille").innerHTML = renderBrailleCells(translateKannada(item));
   stepper.querySelector(".cell-step-note").textContent = ui("cellNote", "Read the Kannada print, then name the braille cell.");
@@ -529,7 +620,7 @@ function renderWorkshopQuestion(slug) {
   const options = buildOptions(state.pool, answer, state.index);
 
   quiz.querySelector(".section-quiz-braille").innerHTML = renderBrailleCells(answer.braille);
-  quiz.querySelector(".section-quiz-help").textContent = `${ui("question", "Question")} ${state.index + 1} of ${state.pool.length}`;
+  quiz.querySelector(".section-quiz-help").textContent = regionalMode() ? `${ui("question", "Question")} ${state.index + 1} / ${state.pool.length}` : `${ui("question", "Question")} ${state.index + 1} of ${state.pool.length}`;
   quiz.querySelector(".section-quiz-feedback").textContent = ui("choose", "Choose an answer to begin.");
   quiz.querySelector(".section-quiz-choices").innerHTML = options.map((item) => `
     <button type="button" data-workshop-answer="${slug}" data-answer="${item.print}">${item.print}</button>
@@ -578,22 +669,22 @@ function setupWorkshopQuizzes() {
 }
 
 function renderSummary(lesson) {
-  summaryTitle.textContent = lesson.title;
+  summaryTitle.textContent = displayLessonTitle(lesson);
   document.querySelector(".summary-modal-header .eyebrow").textContent = ui("summary", "Workshop summary");
   summaryBody.innerHTML = `
     <section>
       <h3>${ui("goals", "Learning goals")}</h3>
       <ul class="objective-list">
-        ${lesson.objectives.map((objective) => `<li>${objective}</li>`).join("")}
+        ${displayObjectives(lesson).map((objective) => `<li>${objective}</li>`).join("")}
       </ul>
     </section>
     <section>
       <h3>${ui("practiceSets", "Practice sets")}</h3>
       <div class="practice-set-grid">
-        ${lesson.practiceSets.map((set) => `
+        ${lesson.practiceSets.map((set, index) => `
           <section class="practice-set" aria-label="${set.title}">
-            <h4>${set.title}</h4>
-            <p>${set.instruction}</p>
+            <h4>${displayPracticeTitle(set, index)}</h4>
+            <p>${displayPracticeInstruction(set)}</p>
             <div class="drill-list">
               ${set.items.map((item) => `
                 <span class="drill-chip">

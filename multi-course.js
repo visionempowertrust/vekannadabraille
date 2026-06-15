@@ -153,7 +153,16 @@ const quizState = new Map();
 const cellState = new Map();
 
 function ui(key, fallback) {
-  if (textMode === "regional" && courseKey && uiText[courseKey]?.[key]) return uiText[courseKey][key];
+  if (textMode === "regional" && courseKey) {
+    const dictionary = uiText[courseKey] || {};
+    if (dictionary[key]) return dictionary[key];
+    const generic = {
+      workshopCopy: `${dictionary.oneAtATime}. ${dictionary.practice}.`,
+      quizCopy: `${dictionary.prev} / ${dictionary.next}.`,
+      cellNote: dictionary.oneAtATime
+    };
+    if (generic[key]) return generic[key];
+  }
   return fallback;
 }
 
@@ -180,8 +189,76 @@ function makeLanguageToggle() {
 
 function updateLanguageToggle() {
   document.querySelectorAll("[data-text-mode]").forEach((button) => {
+    if (button.dataset.textMode === "en") button.textContent = textMode === "regional" ? "A" : "English";
+    if (button.dataset.textMode === "regional") button.textContent = courseKey ? uiText[courseKey].local : "Regional";
     button.classList.toggle("active", button.dataset.textMode === textMode);
   });
+}
+
+function regionalMode() {
+  return textMode === "regional" && courseKey;
+}
+
+function displayLessonTitle(lesson) {
+  if (!regionalMode()) return lesson.title;
+  if (lesson.slug === "vowels-reading-order") return ui("vowels", "Vowels");
+  if (lesson.slug === "marks") return ui("marks", "Marks");
+  if (lesson.slug === "words-sentences") return ui("practiceSets", "Practice sets");
+  const letters = lesson.focus.filter((item) => !["1", "2", "3", ".", "?"].includes(item));
+  return `${ui("consonants", "Consonants")}: ${letters[0]} - ${letters[letters.length - 1]}`;
+}
+
+function displayLessonSummary(lesson) {
+  if (!regionalMode()) return lesson.summary;
+  if (lesson.slug === "vowels-reading-order") return ui("pathCopy", lesson.summary);
+  if (lesson.slug === "marks") return ui("chartCopy", lesson.summary);
+  return ui("practice", "Practice this workshop");
+}
+
+function displayLessonIntroduction(lesson) {
+  if (!regionalMode()) return lesson.introduction;
+  return `${displayLessonTitle(lesson)}. ${ui("oneAtATime", "Learn one cell at a time")}. ${ui("practice", "Practice this workshop")}.`;
+}
+
+function displayObjectives(lesson) {
+  if (!regionalMode()) return lesson.objectives;
+  return [
+    ui("oneAtATime", "Learn one cell at a time"),
+    ui("practice", "Practice this workshop"),
+    ui("chartCopy", "Bharati Braille writes vowel signs as full braille letters after the consonant sound.")
+  ];
+}
+
+function displayPracticeTitle(set, index) {
+  if (!regionalMode()) return set.title;
+  return `${ui("practiceSets", "Practice sets")} ${index + 1}`;
+}
+
+function displayPracticeInstruction(set) {
+  if (!regionalMode()) return set.instruction;
+  return ui("practice", "Practice this workshop");
+}
+
+function displayMeta(lesson) {
+  if (!regionalMode()) return `${lesson.practiceSets.length} sets`;
+  return `${lesson.practiceSets.length} ${ui("practiceSets", "Practice sets")}`;
+}
+
+function displayTime(lesson) {
+  if (!regionalMode()) return lesson.time;
+  const minutes = lesson.time.match(/\d+/)?.[0] || lesson.time;
+  return minutes;
+}
+
+function displayChartLabel(label, group) {
+  if (!regionalMode()) return label;
+  if (group === "vowel") return ui("vowels", "Vowels");
+  if (group === "consonant") return ui("consonants", "Consonants");
+  return ui("marks", "Marks");
+}
+
+function displayDotLabel(dots) {
+  return regionalMode() ? `• ${dots}` : `dots ${dots}`;
 }
 
 function buildChart(data) {
@@ -326,7 +403,7 @@ const brailleOutput = document.querySelector("#brailleOutput");
 
 function setupPageText() {
   document.title = `${course.name} Braille by Sight`;
-  setText("#brandName", textMode === "regional" ? `${ui("local", course.name)} Braille` : `${course.name} Braille by Sight`);
+  setText("#brandName", textMode === "regional" ? ui("local", course.name) : `${course.name} Braille by Sight`);
   setText("#courseEyebrow", ui("eyebrow", "Bharati Braille starter course"));
   setText("#hero-title", ui("hero", `Learn ${course.name} Braille by seeing`));
   setText("#heroCopy", ui("heroCopy", `A workshop-style page for sighted learners who want to recognize ${course.name} Bharati Braille cells.`));
@@ -337,20 +414,21 @@ function setupPageText() {
   setText("#chartCopy", ui("chartCopy", "Bharati Braille writes vowel signs as full braille letters after the consonant sound."));
   setText("#sandboxLabel", ui("print", `${course.name} print`));
   setText("#sandboxCopy", ui("sandboxCopy", `Type ${course.name} text to see a learning-oriented braille rendering.`));
-  setText("#footerName", `${course.name} Braille by Sight`);
+  setText("#footerName", textMode === "regional" ? ui("local", course.name) : `${course.name} Braille by Sight`);
   document.querySelectorAll("nav a").forEach((link) => {
     if (link.getAttribute("href") === "index.html#languages") link.textContent = ui("all", "All languages");
     if (link.getAttribute("href") === "#workshops") link.textContent = ui("workshops", "Workshops");
     if (link.getAttribute("href") === "#chart") link.textContent = ui("chart", "Chart");
     if (link.getAttribute("href") === "#sandbox") link.textContent = ui("sandbox", "Sandbox");
   });
-  document.querySelectorAll(".section-heading .eyebrow").forEach((item) => {
-    if (item.textContent.includes("Workshop")) item.textContent = ui("full", "Full workshops");
-    if (item.textContent.includes("Reference")) item.textContent = ui("chart", "Reference chart");
-  });
+  document.querySelector("#series .eyebrow").textContent = ui("series", "Workshop series");
+  document.querySelector("#workshops .eyebrow").textContent = ui("full", "Full workshops");
+  document.querySelector("#chart .eyebrow").textContent = ui("chart", "Reference chart");
+  document.querySelector("#sandbox .eyebrow").textContent = ui("sandbox", "Sandbox");
   document.querySelector("#series .eyebrow").textContent = ui("series", "Workshop series");
   document.querySelector("#series h2").textContent = ui("build", "Build recognition in small sets");
-  document.querySelector("#workshops-title")?.replaceChildren(document.createTextNode(ui("workshops", "Workshops")));
+  document.querySelector("#workshops .section-heading h2")?.replaceChildren(document.createTextNode(ui("workshops", "Workshops")));
+  document.querySelector("#sandbox .section-heading h2")?.replaceChildren(document.createTextNode(ui("sandbox", "Explore print-to-braille order")));
   document.querySelectorAll("[data-chart-filter='all']").forEach((button) => { button.textContent = ui("allFilter", "All"); });
   document.querySelectorAll("[data-chart-filter='vowel']").forEach((button) => { button.textContent = ui("vowels", "Vowels"); });
   document.querySelectorAll("[data-chart-filter='consonant']").forEach((button) => { button.textContent = ui("consonants", "Consonants"); });
@@ -358,6 +436,16 @@ function setupPageText() {
   document.querySelector(".site-footer a").textContent = ui("back", "Back to top");
   const workshopCount = document.querySelector(".stats strong");
   if (workshopCount) workshopCount.textContent = lessons.length;
+  const statItems = document.querySelectorAll(".stats span");
+  if (regionalMode() && statItems.length >= 3) {
+    statItems[0].innerHTML = `<strong>${lessons.length}</strong> ${ui("workshops", "Workshops")}`;
+    statItems[1].innerHTML = `<strong>6</strong>`;
+    statItems[2].innerHTML = `<strong>1</strong>`;
+  } else if (statItems.length >= 3) {
+    statItems[0].innerHTML = `<strong>${lessons.length}</strong> workshops`;
+    statItems[1].innerHTML = `<strong>6-dot</strong> cells`;
+    statItems[2].innerHTML = `<strong>Grade 1</strong> starter`;
+  }
   textInput.value = course.sample;
   updateLanguageToggle();
 }
@@ -371,8 +459,8 @@ function renderLessons() {
   lessonGrid.innerHTML = lessons.map((lesson) => `
     <article class="workshop-card" id="card-${lesson.slug}">
       <span class="workshop-icon" aria-hidden="true">${renderBrailleCells(lesson.icon)}</span>
-      <div><h3>${lesson.title}</h3><p>${lesson.summary}</p></div>
-      <div class="workshop-meta"><a href="#${lesson.slug}">Practice</a><span>${lesson.practiceSets.length} sets</span></div>
+      <div><h3>${displayLessonTitle(lesson)}</h3><p>${displayLessonSummary(lesson)}</p></div>
+      <div class="workshop-meta"><a href="#${lesson.slug}">${ui("practice", "Practice")}</a><span>${displayMeta(lesson)}</span></div>
     </article>
   `).join("");
 }
@@ -380,8 +468,8 @@ function renderLessons() {
 function renderWorkshopDetails() {
   workshopDetails.innerHTML = lessons.map((lesson, index) => `
     <article class="workshop-detail" id="${lesson.slug}">
-      <div class="workshop-detail-header"><div><p class="eyebrow">Workshop ${index + 1}</p><h3>${lesson.title}</h3><p>${lesson.introduction}</p></div><div class="workshop-badge" aria-hidden="true"><span>${renderBrailleCells(lesson.icon)}</span><strong>${lesson.time}</strong></div></div>
-      <div class="lesson-two-column"><section><h4>${ui("goals", "Learning goals")}</h4><ul class="objective-list">${lesson.objectives.map((objective) => `<li>${objective}</li>`).join("")}</ul></section><section class="cell-stepper" data-cell-stepper="${lesson.slug}" aria-live="polite"><div class="cell-stepper-heading"><h4>${ui("oneAtATime", "Learn one cell at a time")}</h4><span class="cell-step-count"></span></div><div class="cell-step-card"><span class="cell-step-print"></span><span class="cell-step-braille"></span><span class="cell-step-note"></span></div><div class="step-controls"><button class="button secondary dark-text" type="button" data-prev-cell="${lesson.slug}">${ui("prev", "Previous")}</button><button class="button primary" type="button" data-next-cell="${lesson.slug}">${ui("next", "Next")}</button></div></section></div>
+      <div class="workshop-detail-header"><div><p class="eyebrow">${ui("workshops", "Workshop")} ${index + 1}</p><h3>${displayLessonTitle(lesson)}</h3><p>${displayLessonIntroduction(lesson)}</p></div><div class="workshop-badge" aria-hidden="true"><span>${renderBrailleCells(lesson.icon)}</span><strong>${displayTime(lesson)}</strong></div></div>
+      <div class="lesson-two-column"><section><h4>${ui("goals", "Learning goals")}</h4><ul class="objective-list">${displayObjectives(lesson).map((objective) => `<li>${objective}</li>`).join("")}</ul></section><section class="cell-stepper" data-cell-stepper="${lesson.slug}" aria-live="polite"><div class="cell-stepper-heading"><h4>${ui("oneAtATime", "Learn one cell at a time")}</h4><span class="cell-step-count"></span></div><div class="cell-step-card"><span class="cell-step-print"></span><span class="cell-step-braille"></span><span class="cell-step-note"></span></div><div class="step-controls"><button class="button secondary dark-text" type="button" data-prev-cell="${lesson.slug}">${ui("prev", "Previous")}</button><button class="button primary" type="button" data-next-cell="${lesson.slug}">${ui("next", "Next")}</button></div></section></div>
       <button class="button summary-button" type="button" data-summary="${lesson.slug}">${ui("summary", "Workshop summary")}</button>
       <section class="section-quiz" data-workshop-quiz="${lesson.slug}" aria-live="polite"><div class="section-quiz-copy"><h4>${ui("practice", "Practice this workshop")}</h4><p>${ui("quizCopy", "Use Previous and Next to move through this workshop's practice pool.")}</p></div><div class="section-quiz-panel"><div class="section-quiz-prompt"><span class="section-quiz-braille"></span><span class="section-quiz-help"></span></div><div class="section-quiz-choices"></div><div class="section-quiz-footer"><p class="section-quiz-feedback">${ui("choose", "Choose an answer to begin.")}</p><div class="step-controls"><button class="button secondary dark-text" type="button" data-prev-workshop="${lesson.slug}">${ui("prev", "Previous")}</button><button class="button primary" type="button" data-next-workshop="${lesson.slug}">${ui("next", "Next")}</button></div></div></div></section>
     </article>
@@ -390,7 +478,7 @@ function renderWorkshopDetails() {
 
 function renderChart(filter = "all") {
   chartGrid.innerHTML = chart.filter((item) => filter === "all" || item[4] === filter).map(([print, label, braille, dots, group]) => `
-    <article class="chart-card" data-group="${group}"><span class="chart-braille" aria-label="Braille ${dots}">${renderBrailleCells(braille)}</span><div><h3>${print}</h3><p>${label}</p><p>dots ${dots}</p></div></article>
+    <article class="chart-card" data-group="${group}"><span class="chart-braille" aria-label="${displayDotLabel(dots)}">${renderBrailleCells(braille)}</span><div><h3>${print}</h3><p>${displayChartLabel(label, group)}</p><p>${displayDotLabel(dots)}</p></div></article>
   `).join("");
 }
 
@@ -400,7 +488,7 @@ function renderCellStep(slug) {
   const index = cellState.get(slug) || 0;
   if (!lesson || !stepper) return;
   const item = lesson.focus[index];
-  stepper.querySelector(".cell-step-count").textContent = `${index + 1} of ${lesson.focus.length}`;
+  stepper.querySelector(".cell-step-count").textContent = regionalMode() ? `${index + 1} / ${lesson.focus.length}` : `${index + 1} of ${lesson.focus.length}`;
   stepper.querySelector(".cell-step-print").textContent = item;
   stepper.querySelector(".cell-step-braille").innerHTML = renderBrailleCells(translateText(item));
   stepper.querySelector(".cell-step-note").textContent = ui("cellNote", "Read the print, then name the braille cell.");
@@ -444,7 +532,7 @@ function renderWorkshopQuestion(slug) {
   }
   const answer = state.pool[state.index];
   quiz.querySelector(".section-quiz-braille").innerHTML = renderBrailleCells(answer.braille);
-  quiz.querySelector(".section-quiz-help").textContent = `${ui("question", "Question")} ${state.index + 1} of ${state.pool.length}`;
+  quiz.querySelector(".section-quiz-help").textContent = regionalMode() ? `${ui("question", "Question")} ${state.index + 1} / ${state.pool.length}` : `${ui("question", "Question")} ${state.index + 1} of ${state.pool.length}`;
   quiz.querySelector(".section-quiz-feedback").textContent = ui("choose", "Choose an answer to begin.");
   quiz.querySelector(".section-quiz-choices").innerHTML = buildOptions(state.pool, answer, state.index).map((item) => `<button type="button" data-workshop-answer="${slug}" data-answer="${item.print}">${item.print}</button>`).join("");
   quiz.querySelector("[data-prev-workshop]").disabled = state.index === 0;
@@ -476,9 +564,9 @@ function setupWorkshopQuizzes() {
 }
 
 function renderSummary(lesson) {
-  summaryTitle.textContent = lesson.title;
+  summaryTitle.textContent = displayLessonTitle(lesson);
   document.querySelector(".summary-modal-header .eyebrow").textContent = ui("summary", "Workshop summary");
-  summaryBody.innerHTML = `<section><h3>${ui("goals", "Learning goals")}</h3><ul class="objective-list">${lesson.objectives.map((objective) => `<li>${objective}</li>`).join("")}</ul></section><section><h3>${ui("practiceSets", "Practice sets")}</h3><div class="practice-set-grid">${lesson.practiceSets.map((set) => `<section class="practice-set"><h4>${set.title}</h4><p>${set.instruction}</p><div class="drill-list">${set.items.map((item) => `<span class="drill-chip"><strong>${item}</strong><em>${renderBrailleCells(translateText(item))}</em></span>`).join("")}</div></section>`).join("")}</div></section>`;
+  summaryBody.innerHTML = `<section><h3>${ui("goals", "Learning goals")}</h3><ul class="objective-list">${displayObjectives(lesson).map((objective) => `<li>${objective}</li>`).join("")}</ul></section><section><h3>${ui("practiceSets", "Practice sets")}</h3><div class="practice-set-grid">${lesson.practiceSets.map((set, index) => `<section class="practice-set"><h4>${displayPracticeTitle(set, index)}</h4><p>${displayPracticeInstruction(set)}</p><div class="drill-list">${set.items.map((item) => `<span class="drill-chip"><strong>${item}</strong><em>${renderBrailleCells(translateText(item))}</em></span>`).join("")}</div></section>`).join("")}</div></section>`;
 }
 
 function openSummary(slug) {
