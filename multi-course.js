@@ -201,17 +201,17 @@ function regionalMode() {
 
 function displayLessonTitle(lesson) {
   if (!regionalMode()) return lesson.title;
-  if (lesson.slug === "vowels-reading-order") return ui("vowels", "Vowels");
-  if (lesson.slug === "marks") return ui("marks", "Marks");
-  if (lesson.slug === "words-sentences") return ui("practiceSets", "Practice sets");
+  if (lesson.group === "vowels") return ui("vowels", "Vowels");
+  if (lesson.group === "marks") return ui("marks", "Marks");
+  if (lesson.group === "words") return ui("practiceSets", "Practice sets");
   const letters = lesson.focus.filter((item) => !["1", "2", "3", ".", "?"].includes(item));
   return `${ui("consonants", "Consonants")}: ${letters[0]} - ${letters[letters.length - 1]}`;
 }
 
 function displayLessonSummary(lesson) {
   if (!regionalMode()) return lesson.summary;
-  if (lesson.slug === "vowels-reading-order") return ui("pathCopy", lesson.summary);
-  if (lesson.slug === "marks") return ui("chartCopy", lesson.summary);
+  if (lesson.group === "vowels") return ui("pathCopy", lesson.summary);
+  if (lesson.group === "marks") return ui("chartCopy", lesson.summary);
   return ui("practice", "Practice this workshop");
 }
 
@@ -270,53 +270,74 @@ function buildChart(data) {
 
 function buildLessons(data) {
   const firstConsonant = data.rows[0].items[0][0];
-  const firstRow = data.rows[0].items.slice(0, 2).map(([letter]) => letter);
-  const vowelFocus = [...data.vowels.map(([letter]) => letter), firstConsonant, ...firstRow];
+  const vowelLessons = chunkCells(data.vowels).map((chunk, index) => makeVowelLesson(data, chunk, index, firstConsonant));
+  const consonantLessons = chunkCells(data.rows.flatMap((row) => row.items)).map((chunk, index) => makeConsonantLesson(data, chunk, index));
   return [
-    {
-      slug: "vowels-reading-order",
-      title: "Vowels and Reading Order",
-      summary: `Learn independent ${data.name} vowels and vowel signs in Bharati Braille order.`,
-      icon: "⠁",
-      time: "25 min",
-      introduction: `${data.name} print combines consonants with vowel signs. In Bharati Braille sight reading, learners read the consonant cell and then the vowel cell in spoken order.`,
-      objectives: [`Recognize common ${data.name} vowel cells.`, "Read consonant plus vowel in spoken order.", "Use six-dot cells to compare similar vowel patterns."],
-      focus: vowelFocus,
-      practiceSets: [
-        { title: "Vowel warm-up", instruction: "Read each vowel cell aloud.", items: data.vowels.map(([letter]) => letter) },
-        { title: "Vowel signs", instruction: "Read the base consonant first, then the vowel.", items: data.signs.slice(0, 10).map(([sign]) => `${firstConsonant}${sign}`) },
-        { title: "Mixed syllables", instruction: "Practice short syllables in braille order.", items: data.signs.slice(0, 8).map(([sign], index) => `${firstRow[index % firstRow.length]}${sign}`) }
-      ]
-    },
-    ...data.rows.map((row, index) => makeRowLesson(data, row, index)),
+    ...vowelLessons,
+    ...consonantLessons,
     makeMarksLesson(data),
     makeWordsLesson(data)
   ];
 }
 
-function makeRowLesson(data, row, index) {
-  const letters = row.items.map(([letter]) => letter);
-  const signs = data.signs.slice(0, 5).map(([sign]) => sign);
+function chunkCells(items, min = 3, max = 5) {
+  const chunks = [];
+  for (let index = 0; index < items.length; index += max) {
+    chunks.push(items.slice(index, index + max));
+  }
+  while (chunks.length > 1 && chunks[chunks.length - 1].length < min) {
+    const previous = chunks[chunks.length - 2];
+    if (previous.length <= min) break;
+    chunks[chunks.length - 1].unshift(previous.pop());
+  }
+  return chunks;
+}
+
+function makeVowelLesson(data, chunk, index, firstConsonant) {
+  const letters = chunk.map(([letter]) => letter);
+  const signs = chunk.map(([, key]) => data.signs.find(([, signKey]) => signKey === key)?.[0]).filter(Boolean);
   return {
-    slug: `row-${index + 1}`,
-    title: row.title,
-    summary: `Practice ${data.name} letters in this consonant group.`,
-    icon: brailleMap[row.items[0][1]] || "⠅",
-    time: index === 4 ? "35 min" : "25 min",
-    introduction: `This workshop introduces ${letters.join(", ")}. Practice the row as a family, then mix the letters with vowels for sight reading.`,
-    objectives: [`Recognize ${letters.slice(0, 5).join(", ")} by sight.`, "Compare nearby six-dot patterns.", "Read short syllables without pausing at every cell."],
+    group: "vowels",
+    slug: `vowels-${index + 1}`,
+    title: `Vowels ${index + 1}: ${letters[0]} to ${letters[letters.length - 1]}`,
+    summary: `Learn a small group of independent ${data.name} vowels and their Bharati Braille cells.`,
+    icon: brailleMap[chunk[0][1]] || "\u2801",
+    time: "20 min",
+    introduction: `${data.name} print combines consonants with vowel signs. In Bharati Braille sight reading, learners read the consonant cell and then the vowel cell in spoken order.`,
+    objectives: [`Recognize ${letters.join(", ")} by sight.`, "Read consonant plus vowel in spoken order.", "Use six-dot cells to compare similar vowel patterns."],
     focus: letters,
     practiceSets: [
-      { title: "Row read", instruction: "Read the row forward and backward.", items: [...letters, ...letters.slice().reverse()] },
-      { title: "Pair contrast", instruction: "Compare nearby letters.", items: letters.slice(0, -1).map((letter, letterIndex) => `${letter} / ${letters[letterIndex + 1]}`) },
-      { title: "Syllable builder", instruction: "Read consonant plus vowel.", items: letters.slice(0, 5).flatMap((letter) => signs.slice(0, 2).map((sign) => `${letter}${sign}`)) }
+      { title: "Vowel warm-up", instruction: "Read each vowel cell aloud.", items: letters },
+      { title: "Vowel signs", instruction: "Read the base consonant first, then the vowel.", items: signs.map((sign) => `${firstConsonant}${sign}`) },
+      { title: "Mixed review", instruction: "Read the print, then name the braille cell.", items: [...letters, ...signs.map((sign) => `${firstConsonant}${sign}`)] }
     ]
   };
 }
 
+function makeConsonantLesson(data, chunk, index) {
+  const letters = chunk.map(([letter]) => letter);
+  const signs = data.signs.slice(0, 5).map(([sign]) => sign);
+  return {
+    group: "consonants",
+    slug: `consonants-${index + 1}`,
+    title: `Consonants ${index + 1}: ${letters[0]} to ${letters[letters.length - 1]}`,
+    summary: `Practice ${data.name} letters in this consonant group.`,
+    icon: brailleMap[chunk[0][1]] || "\u2805",
+    time: "25 min",
+    introduction: `This workshop introduces ${letters.join(", ")}. Practice the group as a family, then mix the letters with vowels for sight reading.`,
+    objectives: [`Recognize ${letters.join(", ")} by sight.`, "Compare nearby six-dot patterns.", "Read short syllables without pausing at every cell."],
+    focus: letters,
+    practiceSets: [
+      { title: "Group read", instruction: "Read the group forward and backward.", items: [...letters, ...letters.slice().reverse()] },
+      { title: "Pair contrast", instruction: "Compare nearby letters.", items: letters.slice(0, -1).map((letter, letterIndex) => `${letter} / ${letters[letterIndex + 1]}`) },
+      { title: "Syllable builder", instruction: "Read consonant plus vowel.", items: letters.flatMap((letter) => signs.slice(0, 2).map((sign) => `${letter}${sign}`)) }
+    ]
+  };
+}
 function makeMarksLesson(data) {
   const sample = data.rows[0].items[0][0];
   return {
+    group: "marks",
     slug: "marks",
     title: "Halant, Anusvara, Visarga",
     summary: "Practice common marks used with syllables.",
@@ -336,6 +357,7 @@ function makeMarksLesson(data) {
 function makeWordsLesson(data) {
   const sampleItems = data.sample.split(" ");
   return {
+    group: "words",
     slug: "words-sentences",
     title: "Words and Sentences",
     summary: `Read short ${data.name} words, numbers, and punctuation.`,
@@ -343,7 +365,7 @@ function makeWordsLesson(data) {
     time: "40 min",
     introduction: `The final workshop moves from cells to short ${data.name} reading lines.`,
     objectives: ["Read short words using learned cells.", "Recognize numbers with the number sign.", "Practice punctuation in short lines."],
-    focus: [...sampleItems, "1", "2", "3", ".", "?"],
+    focus: [...sampleItems.slice(0, 2), "1", ".", "?"],
     practiceSets: [
       { title: "Short words", instruction: "Read one word at a time.", items: sampleItems },
       { title: "Numbers", instruction: "Read the number sign before each digit.", items: ["1", "2", "3", "10", "25"] },

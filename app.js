@@ -1,4 +1,4 @@
-const lessons = [
+const sourceLessons = [
   {
     slug: "vowels-reading-order",
     title: "Vowels and Reading Order",
@@ -12,7 +12,7 @@ const lessons = [
       "Explain why vowel signs are practiced as full vowel cells.",
       "Read open syllables such as ಕಾ, ಕಿ, ಕೂ, ಗೆ, and ಮೈ in braille order."
     ],
-    focus: ["ಅ", "ಆ", "ಇ", "ಈ", "ಉ", "ಊ", "ಎ", "ಏ", "ಐ", "ಒ", "ಓ", "ಔ", "ಕ", "ಗ", "ಮ"],
+    focus: ["ಅ", "ಆ", "ಇ", "ಈ", "ಉ", "ಊ", "ಎ", "ಏ", "ಐ", "ಒ", "ಓ", "ಔ", "ಋ", "ಕ", "ಗ", "ಮ"],
     practiceSets: [
       { title: "Vowel warm-up", instruction: "Read each braille cell aloud, then cover the print and name it again.", items: ["ಅ", "ಆ", "ಇ", "ಈ", "ಉ", "ಊ", "ಎ", "ಏ", "ಐ", "ಒ", "ಓ", "ಔ"] },
       { title: "Short vowel pairs", instruction: "Compare the shape of each pair and say what changed.", items: ["ಅ / ಆ", "ಇ / ಈ", "ಉ / ಊ", "ಎ / ಏ", "ಒ / ಓ"] },
@@ -123,7 +123,7 @@ const lessons = [
       "Read family groups such as ಪ/ಫ/ಬ/ಭ/ಮ and ಯ/ರ/ಲ/ವ.",
       "Use the full consonant inventory in mixed drills."
     ],
-    focus: ["ಪ", "ಫ", "ಬ", "ಭ", "ಮ", "ಯ", "ರ", "ಲ", "ಳ", "ವ", "ಶ", "ಷ", "ಸ", "ಹ"],
+    focus: ["ಪ", "ಫ", "ಬ", "ಭ", "ಮ", "ಯ", "ರ", "ಲ", "ಳ", "ವ", "ಶ", "ಷ", "ಸ", "ಹ", "ಕ್ಷ"],
     practiceSets: [
       { title: "Labial family", instruction: "Read this family until each cell feels familiar.", items: ["ಪ", "ಫ", "ಬ", "ಭ", "ಮ", "ಪಾ", "ಫಿ", "ಬು", "ಭೇ", "ಮೋ"] },
       { title: "Flow letters", instruction: "Practice letters that commonly connect sounds in words.", items: ["ಯ", "ರ", "ಲ", "ಳ", "ವ", "ಯಾ", "ರಿ", "ಲು", "ವೇ", "ವೋ"] },
@@ -169,7 +169,7 @@ const lessons = [
       "Recognize Kannada and Arabic numerals with the number sign.",
       "Read punctuation and short sentence lines with a steady rhythm."
     ],
-    focus: ["ಕನ್ನಡ", "ಕಲಿಕೆ", "ಮನೆ", "ನದಿ", "೧", "೨", "೩", ".", "?"],
+    focus: ["ಕನ್ನಡ", "ಕಲಿಕೆ", "ಮನೆ", "ನದಿ", "೧", "೨", "೩", "೯", ".", "?"],
     practiceSets: [
       { title: "Short words", instruction: "Read one word at a time. Then read the full line.", items: ["ಮನೆ", "ನದಿ", "ಕವಿ", "ಮಲೆ", "ಹರಿ", "ಸರಳ", "ಕಲಿಕೆ"] },
       { title: "Kannada learning words", instruction: "Practice words likely to appear in this course.", items: ["ಕನ್ನಡ", "ಬ್ರೈಲ್", "ಓದು", "ಅಕ್ಷರ", "ಪಾಠ", "ಅಭ್ಯಾಸ"] },
@@ -180,6 +180,49 @@ const lessons = [
     ]
   }
 ];
+
+function chunkCells(items, min = 3, max = 5) {
+  const chunks = [];
+  for (let index = 0; index < items.length; index += max) {
+    chunks.push(items.slice(index, index + max));
+  }
+  while (chunks.length > 1 && chunks[chunks.length - 1].length < min) {
+    const previous = chunks[chunks.length - 2];
+    if (previous.length <= min) break;
+    chunks[chunks.length - 1].unshift(previous.pop());
+  }
+  return chunks;
+}
+
+function lessonGroup(lesson) {
+  if (lesson.slug === "vowels-reading-order") return "vowels";
+  if (lesson.slug === "marks") return "marks";
+  if (lesson.slug === "words-sentences") return "words";
+  return "consonants";
+}
+
+function expandedTitle(lesson, focus, index) {
+  if (focus.length === lesson.focus.length) return lesson.title;
+  if (lessonGroup(lesson) === "vowels") return `Vowels ${index + 1}: ${focus[0]} to ${focus[focus.length - 1]}`;
+  if (lessonGroup(lesson) === "marks") return `Marks ${index + 1}: ${focus[0]} to ${focus[focus.length - 1]}`;
+  if (lessonGroup(lesson) === "words") return `Reading Practice ${index + 1}`;
+  return `Consonants ${index + 1}: ${focus[0]} to ${focus[focus.length - 1]}`;
+}
+
+function expandLessons(rawLessons) {
+  return rawLessons.flatMap((lesson) => {
+    const chunks = chunkCells(lesson.focus);
+    return chunks.map((focus, index) => ({
+      ...lesson,
+      group: lessonGroup(lesson),
+      slug: chunks.length === 1 ? lesson.slug : `${lesson.slug}-${index + 1}`,
+      title: expandedTitle(lesson, focus, index),
+      focus
+    }));
+  });
+}
+
+const lessons = expandLessons(sourceLessons);
 
 const chart = [
   ["ಅ", "a", "⠁", "1", "vowel"], ["ಆ", "aa", "⠜", "345", "vowel"],
@@ -265,17 +308,17 @@ function regionalMode() {
 
 function displayLessonTitle(lesson) {
   if (!regionalMode()) return lesson.title;
-  if (lesson.slug === "vowels-reading-order") return ui("vowels", "Vowels");
-  if (lesson.slug === "marks") return ui("marks", "Marks");
-  if (lesson.slug === "words-sentences") return ui("practiceSets", "Practice sets");
+  if (lesson.group === "vowels") return ui("vowels", "Vowels");
+  if (lesson.group === "marks") return ui("marks", "Marks");
+  if (lesson.group === "words") return ui("practiceSets", "Practice sets");
   const letters = lesson.focus.filter((item) => !["1", "2", "3", ".", "?"].includes(item));
   return `${ui("consonants", "Consonants")}: ${letters[0]} - ${letters[Math.min(letters.length - 1, 4)]}`;
 }
 
 function displayLessonSummary(lesson) {
   if (!regionalMode()) return lesson.summary;
-  if (lesson.slug === "vowels-reading-order") return ui("pathCopy", lesson.summary);
-  if (lesson.slug === "marks") return ui("chartCopy", lesson.summary);
+  if (lesson.group === "vowels") return ui("pathCopy", lesson.summary);
+  if (lesson.group === "marks") return ui("chartCopy", lesson.summary);
   return ui("practice", "Practice this workshop");
 }
 
@@ -376,11 +419,11 @@ function setupPageText() {
   document.querySelector("#sandbox .section-heading h2").textContent = ui("sandbox", "Explore print-to-braille order");
   const statItems = document.querySelectorAll(".stats span");
   if (regionalMode() && statItems.length >= 3) {
-    statItems[0].innerHTML = `<strong>8</strong> ${ui("workshops", "Workshops")}`;
+    statItems[0].innerHTML = `<strong>${lessons.length}</strong> ${ui("workshops", "Workshops")}`;
     statItems[1].innerHTML = `<strong>6</strong>`;
     statItems[2].innerHTML = `<strong>1</strong>`;
   } else if (statItems.length >= 3) {
-    statItems[0].innerHTML = `<strong>8</strong> workshops`;
+    statItems[0].innerHTML = `<strong>${lessons.length}</strong> workshops`;
     statItems[1].innerHTML = `<strong>6-dot</strong> cells`;
     statItems[2].innerHTML = `<strong>Grade 1</strong> Kannada`;
   }
