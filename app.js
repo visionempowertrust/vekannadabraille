@@ -241,6 +241,72 @@ const brailleOutput = document.querySelector("#brailleOutput");
 
 const quizState = new Map();
 const cellState = new Map();
+let textMode = localStorage.getItem("text-mode-kannada") || "en";
+const kannadaUi = {
+  local: "ಕನ್ನಡ", workshops: "ಕಾರ್ಯಾಗಾರಗಳು", chart: "ಪಟ್ಟಿ", sandbox: "ಅಭ್ಯಾಸ ಪೆಟ್ಟಿಗೆ",
+  goals: "ಕಲಿಕೆಯ ಗುರಿಗಳು", oneAtATime: "ಒಂದೊಂದೇ ಸೆಲ್ ಕಲಿಯಿರಿ", summary: "ಕಾರ್ಯಾಗಾರ ಸಾರಾಂಶ",
+  practice: "ಈ ಕಾರ್ಯಾಗಾರವನ್ನು ಅಭ್ಯಾಸ ಮಾಡಿ", choose: "ಉತ್ತರವನ್ನು ಆಯ್ಕೆಮಾಡಿ.", prev: "ಹಿಂದಿನದು", next: "ಮುಂದಿನದು",
+  question: "ಪ್ರಶ್ನೆ", correct: "ಸರಿ", notQuite: "ಇನ್ನೂ ಸರಿಯಾಗಿಲ್ಲ", practiceSets: "ಅಭ್ಯಾಸ ಸಮೂಹಗಳು",
+  cellNote: "ಮುದ್ರಿತ ಅಕ್ಷರವನ್ನು ಓದಿ, ನಂತರ ಬ್ರೈಲ್ ಸೆಲ್ ಹೆಸರಿಸಿ.", quizCopy: "ಈ ಕಾರ್ಯಾಗಾರದ ಅಭ್ಯಾಸ ಪ್ರಶ್ನೆಗಳನ್ನು ಹಿಂದಿನದು ಮತ್ತು ಮುಂದಿನದು ಬಳಸಿ ನೋಡಿ.",
+  back: "ಮೇಲಕ್ಕೆ", allFilter: "ಎಲ್ಲ", vowels: "ಸ್ವರಗಳು", consonants: "ವ್ಯಂಜನಗಳು", marks: "ಗುರುತುಗಳು",
+  hero: "ಕನ್ನಡ ಬ್ರೈಲ್ ನೋಡಿ ಕಲಿಯಿರಿ", heroCopy: "ಕನ್ನಡ ಭಾರತೀ ಬ್ರೈಲ್ ಸೆಲ್‌ಗಳನ್ನು ಗುರುತಿಸಲು ದೃಷ್ಟಿಯುಳ್ಳ ಕಲಿಯುವವರಿಗೆ ಕಾರ್ಯಾಗಾರ ಶೈಲಿಯ ಪುಟ.",
+  path: "ಸೂಚಿಸಿದ ಮಾರ್ಗ", pathCopy: "ಸ್ವರಗಳು, ಸಾಮಾನ್ಯ ವ್ಯಂಜನಗಳು, ಸ್ವರ ಗುರುತುಗಳು, ಹಲಂತ ಗುಂಪುಗಳು, ಸಂಖ್ಯೆಗಳು ಮತ್ತು ಚಿಕ್ಕ ಓದು ಅಭ್ಯಾಸಗಳ ಮೂಲಕ ಕಲಿಯಿರಿ.",
+  chartTitle: "ಕನ್ನಡ ಅಕ್ಷರಗಳು ಮತ್ತು ಬ್ರೈಲ್ ಸೆಲ್‌ಗಳು", chartCopy: "ಭಾರತೀ ಬ್ರೈಲ್‌ನಲ್ಲಿ ಸ್ವರ ಗುರುತುಗಳನ್ನು ವ್ಯಂಜನದ ನಂತರ ಪೂರ್ಣ ಸ್ವರ ಸೆಲ್‌ಗಳಾಗಿ ಓದುತ್ತೇವೆ.",
+  sandboxLabel: "ಕನ್ನಡ ಮುದ್ರಣ", sandboxCopy: "ಕನ್ನಡ ಪಠ್ಯವನ್ನು ಟೈಪ್ ಮಾಡಿ ಕಲಿಕೆಯ ಬ್ರೈಲ್ ರೂಪವನ್ನು ನೋಡಿ."
+};
+
+function ui(key, fallback) {
+  return textMode === "kn" ? kannadaUi[key] || fallback : fallback;
+}
+
+function makeLanguageToggle() {
+  const nav = document.querySelector("nav");
+  if (!nav) return;
+  const toggle = document.createElement("div");
+  toggle.className = "language-toggle";
+  toggle.setAttribute("aria-label", "Text language");
+  toggle.innerHTML = `
+    <button type="button" data-text-mode="en">English</button>
+    <button type="button" data-text-mode="kn">ಕನ್ನಡ</button>
+  `;
+  nav.appendChild(toggle);
+  toggle.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-text-mode]");
+    if (!button) return;
+    textMode = button.dataset.textMode;
+    localStorage.setItem("text-mode-kannada", textMode);
+    renderAll();
+  });
+  updateLanguageToggle();
+}
+
+function updateLanguageToggle() {
+  document.querySelectorAll("[data-text-mode]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.textMode === textMode);
+  });
+}
+
+function setupPageText() {
+  document.querySelectorAll("nav a").forEach((link) => {
+    if (link.getAttribute("href") === "#workshops") link.textContent = ui("workshops", "Workshops");
+    if (link.getAttribute("href") === "#chart") link.textContent = ui("chart", "Chart");
+    if (link.getAttribute("href") === "#sandbox") link.textContent = ui("sandbox", "Sandbox");
+  });
+  document.querySelector("#hero-title").textContent = ui("hero", "Learn Kannada Braille by seeing");
+  document.querySelector(".hero-copy p:last-child").textContent = ui("heroCopy", "A workshop-style website for sighted learners who want to recognize Kannada braille cells, understand the writing order, and build confidence one group at a time.");
+  document.querySelector("#path-title").textContent = ui("path", "Suggested path");
+  document.querySelector(".intro p").textContent = ui("pathCopy", "Start with vowels and common consonants, then move to consonant rows, vowel signs, halant clusters, numbers, punctuation, and short reading drills.");
+  document.querySelector("#chart-title").textContent = ui("chartTitle", "Kannada letters and braille cells");
+  document.querySelector("#chart .section-heading p:not(.eyebrow)").textContent = ui("chartCopy", "Bharati Braille writes vowels as full braille letters after the consonant sound. For example, a printed vowel sign is learned as a spoken-order braille cell.");
+  document.querySelector("label[for='kannadaInput']").textContent = ui("sandboxLabel", "Kannada print");
+  document.querySelector("#sandbox .section-heading p:not(.eyebrow)").textContent = ui("sandboxCopy", "Type Kannada text to see a learning-oriented braille rendering. Unknown characters are kept as-is so teachers can spot gaps in the starter table.");
+  document.querySelector("[data-chart-filter='all']").textContent = ui("allFilter", "All");
+  document.querySelector("[data-chart-filter='vowel']").textContent = ui("vowels", "Vowels");
+  document.querySelector("[data-chart-filter='consonant']").textContent = ui("consonants", "Consonants");
+  document.querySelector("[data-chart-filter='mark']").textContent = ui("marks", "Marks");
+  document.querySelector(".site-footer a").textContent = ui("back", "Back to top");
+  updateLanguageToggle();
+}
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({
@@ -322,14 +388,14 @@ function renderWorkshopDetails() {
 
       <div class="lesson-two-column">
         <section aria-label="${lesson.title} objectives">
-          <h4>Learning goals</h4>
+          <h4>${ui("goals", "Learning goals")}</h4>
           <ul class="objective-list">
             ${lesson.objectives.map((objective) => `<li>${objective}</li>`).join("")}
           </ul>
         </section>
         <section class="cell-stepper" data-cell-stepper="${lesson.slug}" aria-label="${lesson.title} cell lesson" aria-live="polite">
           <div class="cell-stepper-heading">
-            <h4>Learn one cell at a time</h4>
+            <h4>${ui("oneAtATime", "Learn one cell at a time")}</h4>
             <span class="cell-step-count"></span>
           </div>
           <div class="cell-step-card">
@@ -338,18 +404,18 @@ function renderWorkshopDetails() {
             <span class="cell-step-note"></span>
           </div>
           <div class="step-controls">
-            <button class="button secondary dark-text" type="button" data-prev-cell="${lesson.slug}">Previous</button>
-            <button class="button primary" type="button" data-next-cell="${lesson.slug}">Next</button>
+            <button class="button secondary dark-text" type="button" data-prev-cell="${lesson.slug}">${ui("prev", "Previous")}</button>
+            <button class="button primary" type="button" data-next-cell="${lesson.slug}">${ui("next", "Next")}</button>
           </div>
         </section>
       </div>
 
-      <button class="button summary-button" type="button" data-summary="${lesson.slug}">Workshop summary</button>
+      <button class="button summary-button" type="button" data-summary="${lesson.slug}">${ui("summary", "Workshop summary")}</button>
 
       <section class="section-quiz" data-workshop-quiz="${lesson.slug}" aria-label="${lesson.title} quiz" aria-live="polite">
         <div class="section-quiz-copy">
-          <h4>Practice this workshop</h4>
-          <p>Use Previous and Next to move through this workshop's practice pool.</p>
+          <h4>${ui("practice", "Practice this workshop")}</h4>
+          <p>${ui("quizCopy", "Use Previous and Next to move through this workshop's practice pool.")}</p>
         </div>
         <div class="section-quiz-panel">
           <div class="section-quiz-prompt">
@@ -358,10 +424,10 @@ function renderWorkshopDetails() {
           </div>
           <div class="section-quiz-choices"></div>
           <div class="section-quiz-footer">
-            <p class="section-quiz-feedback">Choose an answer to begin.</p>
+            <p class="section-quiz-feedback">${ui("choose", "Choose an answer to begin.")}</p>
             <div class="step-controls">
-              <button class="button secondary dark-text" type="button" data-prev-workshop="${lesson.slug}">Previous</button>
-              <button class="button primary" type="button" data-next-workshop="${lesson.slug}">Next</button>
+              <button class="button secondary dark-text" type="button" data-prev-workshop="${lesson.slug}">${ui("prev", "Previous")}</button>
+              <button class="button primary" type="button" data-next-workshop="${lesson.slug}">${ui("next", "Next")}</button>
             </div>
           </div>
         </div>
@@ -399,7 +465,7 @@ function renderCellStep(slug) {
   stepper.querySelector(".cell-step-count").textContent = `${index + 1} of ${lesson.focus.length}`;
   stepper.querySelector(".cell-step-print").textContent = item;
   stepper.querySelector(".cell-step-braille").innerHTML = renderBrailleCells(translateKannada(item));
-  stepper.querySelector(".cell-step-note").textContent = "Read the Kannada print, then name the braille cell.";
+  stepper.querySelector(".cell-step-note").textContent = ui("cellNote", "Read the Kannada print, then name the braille cell.");
   stepper.querySelector("[data-prev-cell]").disabled = index === 0;
   stepper.querySelector("[data-next-cell]").disabled = index === lesson.focus.length - 1;
 }
@@ -463,8 +529,8 @@ function renderWorkshopQuestion(slug) {
   const options = buildOptions(state.pool, answer, state.index);
 
   quiz.querySelector(".section-quiz-braille").innerHTML = renderBrailleCells(answer.braille);
-  quiz.querySelector(".section-quiz-help").textContent = `Question ${state.index + 1} of ${state.pool.length}`;
-  quiz.querySelector(".section-quiz-feedback").textContent = "Choose an answer to begin.";
+  quiz.querySelector(".section-quiz-help").textContent = `${ui("question", "Question")} ${state.index + 1} of ${state.pool.length}`;
+  quiz.querySelector(".section-quiz-feedback").textContent = ui("choose", "Choose an answer to begin.");
   quiz.querySelector(".section-quiz-choices").innerHTML = options.map((item) => `
     <button type="button" data-workshop-answer="${slug}" data-answer="${item.print}">${item.print}</button>
   `).join("");
@@ -503,8 +569,8 @@ function answerWorkshopQuestion(button) {
   });
   if (!isCorrect) button.classList.add("incorrect");
   quiz.querySelector(".section-quiz-feedback").textContent = isCorrect
-    ? `Correct: ${answer.print}.`
-    : `Not quite. This is ${answer.print}.`;
+    ? `${ui("correct", "Correct")}: ${answer.print}.`
+    : `${ui("notQuite", "Not quite")}. ${answer.print}.`;
 }
 
 function setupWorkshopQuizzes() {
@@ -513,15 +579,16 @@ function setupWorkshopQuizzes() {
 
 function renderSummary(lesson) {
   summaryTitle.textContent = lesson.title;
+  document.querySelector(".summary-modal-header .eyebrow").textContent = ui("summary", "Workshop summary");
   summaryBody.innerHTML = `
     <section>
-      <h3>Learning goals</h3>
+      <h3>${ui("goals", "Learning goals")}</h3>
       <ul class="objective-list">
         ${lesson.objectives.map((objective) => `<li>${objective}</li>`).join("")}
       </ul>
     </section>
     <section>
-      <h3>Practice sets</h3>
+      <h3>${ui("practiceSets", "Practice sets")}</h3>
       <div class="practice-set-grid">
         ${lesson.practiceSets.map((set) => `
           <section class="practice-set" aria-label="${set.title}">
@@ -596,6 +663,19 @@ function updateSandbox() {
   brailleOutput.innerHTML = renderBrailleCells(translateKannada(kannadaInput.value));
 }
 
+function renderAll() {
+  quizState.clear();
+  cellState.clear();
+  setupPageText();
+  renderLessons();
+  renderWorkshopDetails();
+  renderStaticBraille();
+  setupCellSteppers();
+  setupWorkshopQuizzes();
+  renderChart(document.querySelector("[data-chart-filter].active")?.dataset.chartFilter || "all");
+  updateSandbox();
+}
+
 chartButtons.forEach((button) => {
   button.addEventListener("click", () => {
     chartButtons.forEach((item) => item.classList.remove("active"));
@@ -647,10 +727,5 @@ document.addEventListener("keydown", (event) => {
 });
 kannadaInput.addEventListener("input", updateSandbox);
 
-renderLessons();
-renderWorkshopDetails();
-renderStaticBraille();
-setupCellSteppers();
-setupWorkshopQuizzes();
-renderChart();
-updateSandbox();
+makeLanguageToggle();
+renderAll();

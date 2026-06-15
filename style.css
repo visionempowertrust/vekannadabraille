@@ -120,6 +120,31 @@ nav {
   gap: 8px;
 }
 
+.language-toggle {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.language-toggle button {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.language-toggle button.active {
+  background: var(--green);
+  color: #fff;
+}
+
 nav a {
   padding: 9px 12px;
   border-radius: 8px;

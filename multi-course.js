@@ -63,6 +63,68 @@ const languageData = {
   }
 };
 
+const uiText = {
+  tamil: {
+    local: "தமிழ்", all: "அனைத்து மொழிகள்", workshops: "பயிற்சிப் பட்டறைகள்", chart: "அட்டவணை", sandbox: "முயற்சி பெட்டி",
+    eyebrow: "பாரதி பிரெயில் தொடக்கப் பாடம்", hero: "தமிழ் பிரெயிலை பார்த்து கற்கவும்", heroCopy: "தமிழ் பாரதி பிரெயில் செல்களை பார்வையால் அறிய உதவும் பயிற்சி பக்கம்.",
+    path: "பரிந்துரைக்கப்பட்ட பாதை", pathCopy: "உயிரெழுத்துகள், மெய்யெழுத்துகள், குறிகள், சொற்கள், குறும் வாசிப்பு பயிற்சிகள் என படிப்படியாக செல்லுங்கள்.",
+    series: "பயிற்சி தொடர்", build: "சிறு தொகுதிகளாக அறிதலை வளர்க்கவும்", full: "முழு பட்டறைகள்", oneAtATime: "ஒரு செல்லை ஒவ்வொன்றாக கற்கவும்",
+    goals: "கற்றல் இலக்குகள்", summary: "பட்டறை சுருக்கம்", practice: "இந்த பட்டறையைப் பயிற்சி செய்யவும்", choose: "பதில் ஒன்றைத் தேர்ந்தெடுக்கவும்.",
+    prev: "முந்தையது", next: "அடுத்தது", chartTitle: "தமிழ் எழுத்துகள் மற்றும் பிரெயில் செல்கள்", chartCopy: "பாரதி பிரெயிலில் உயிர்குறிகள் மெய்யெழுத்துக்குப் பிறகு முழு உயிர் செல்களாக எழுதப்படுகின்றன.",
+    vowels: "உயிரெழுத்துகள்", consonants: "மெய்யெழுத்துகள்", marks: "குறிகள்", allFilter: "அனைத்தும்", print: "தமிழ் எழுத்து", sandboxCopy: "தமிழ் உரையைத் தட்டச்சு செய்து கற்றல் நோக்கிலான பிரெயில் வடிவத்தைப் பாருங்கள்.",
+    back: "மேலே செல்லவும்", practiceSets: "பயிற்சி தொகுதிகள்", question: "கேள்வி", correct: "சரி", notQuite: "மீண்டும் முயற்சிக்கவும்"
+  },
+  hindi: {
+    local: "हिन्दी", all: "सभी भाषाएँ", workshops: "कार्यशालाएँ", chart: "तालिका", sandbox: "अभ्यास बॉक्स",
+    eyebrow: "भारती ब्रेल प्रारंभिक पाठ", hero: "हिन्दी ब्रेल देखकर सीखें", heroCopy: "हिन्दी भारती ब्रेल कोशिकाओं को देखकर पहचानने के लिए अभ्यास पृष्ठ.",
+    path: "सुझाया गया क्रम", pathCopy: "स्वर, व्यंजन, चिह्न, शब्द और छोटे पाठ अभ्यास क्रम से सीखें.", series: "कार्यशाला क्रम", build: "छोटे समूहों में पहचान विकसित करें", full: "पूर्ण कार्यशालाएँ", oneAtATime: "एक समय में एक सेल सीखें",
+    goals: "सीखने के लक्ष्य", summary: "कार्यशाला सारांश", practice: "इस कार्यशाला का अभ्यास करें", choose: "उत्तर चुनें.", prev: "पिछला", next: "अगला",
+    chartTitle: "हिन्दी अक्षर और ब्रेल सेल", chartCopy: "भारती ब्रेल में मात्रा को व्यंजन के बाद पूर्ण स्वर सेल के रूप में पढ़ा जाता है.", vowels: "स्वर", consonants: "व्यंजन", marks: "चिह्न", allFilter: "सभी", print: "हिन्दी पाठ", sandboxCopy: "हिन्दी पाठ टाइप करके सीखने योग्य ब्रेल रूप देखें.", back: "ऊपर जाएँ", practiceSets: "अभ्यास समूह", question: "प्रश्न", correct: "सही", notQuite: "पूरी तरह नहीं"
+  },
+  malayalam: {
+    local: "മലയാളം", all: "എല്ലാ ഭാഷകളും", workshops: "വർക്ക്‌ഷോപ്പുകൾ", chart: "ചാർട്ട്", sandbox: "പരീക്ഷണ പെട്ടി",
+    eyebrow: "ഭാരതി ബ്രെയിൽ ആരംഭ പാഠം", hero: "മലയാളം ബ്രെയിൽ കണ്ട് പഠിക്കുക", heroCopy: "മലയാളം ഭാരതി ബ്രെയിൽ സെല്ലുകൾ കണ്ട് തിരിച്ചറിയാൻ സഹായിക്കുന്ന പരിശീലന പേജ്.",
+    path: "ശുപാർശ ചെയ്യുന്ന വഴി", pathCopy: "സ്വരങ്ങൾ, വ്യഞ്ജനങ്ങൾ, ചിഹ്നങ്ങൾ, വാക്കുകൾ, ചെറുവായനകൾ എന്ന ക്രമത്തിൽ പഠിക്കുക.", series: "വർക്ക്‌ഷോപ്പ് പരമ്പര", build: "ചെറിയ കൂട്ടങ്ങളിലൂടെ തിരിച്ചറിവ് വളർത്തുക", full: "മുഴുവൻ വർക്ക്‌ഷോപ്പുകൾ", oneAtATime: "ഒരു സെൽ വീതം പഠിക്കുക",
+    goals: "പഠന ലക്ഷ്യങ്ങൾ", summary: "വർക്ക്‌ഷോപ്പ് സംഗ്രഹം", practice: "ഈ വർക്ക്‌ഷോപ്പ് പരിശീലിക്കുക", choose: "ഒരു ഉത്തരം തിരഞ്ഞെടുക്കുക.", prev: "മുമ്പത്തെത്", next: "അടുത്തത്",
+    chartTitle: "മലയാളം അക്ഷരങ്ങളും ബ്രെയിൽ സെല്ലുകളും", chartCopy: "ഭാരതി ബ്രെയിലിൽ സ്വരചിഹ്നങ്ങൾ വ്യഞ്ജനത്തിന് ശേഷം പൂർണ്ണ സ്വര സെല്ലുകളായി വായിക്കുന്നു.", vowels: "സ്വരങ്ങൾ", consonants: "വ്യഞ്ജനങ്ങൾ", marks: "ചിഹ്നങ്ങൾ", allFilter: "എല്ലാം", print: "മലയാളം എഴുത്ത്", sandboxCopy: "മലയാളം പാഠം ടൈപ്പ് ചെയ്ത് ബ്രെയിൽ രൂപം കാണുക.", back: "മുകളിലേക്ക്", practiceSets: "പരിശീലന കൂട്ടങ്ങൾ", question: "ചോദ്യം", correct: "ശരി", notQuite: "ശരിയായില്ല"
+  },
+  telugu: {
+    local: "తెలుగు", all: "అన్ని భాషలు", workshops: "వర్క్‌షాప్‌లు", chart: "చార్ట్", sandbox: "ప్రయోగ పెట్టె",
+    eyebrow: "భారతి బ్రెయిల్ ప్రారంభ పాఠం", hero: "తెలుగు బ్రెయిల్‌ను చూసి నేర్చుకోండి", heroCopy: "తెలుగు భారతి బ్రెయిల్ సెల్‌లను చూసి గుర్తించడానికి అభ్యాస పేజీ.",
+    path: "సూచించిన మార్గం", pathCopy: "అచ్చులు, హల్లులు, గుర్తులు, పదాలు, చిన్న పఠనాభ్యాసాలు వరుసగా నేర్చుకోండి.", series: "వర్క్‌షాప్ శ్రేణి", build: "చిన్న సమూహాలలో గుర్తింపును పెంచుకోండి", full: "పూర్తి వర్క్‌షాప్‌లు", oneAtATime: "ఒక్కసారి ఒక సెల్ నేర్చుకోండి",
+    goals: "అభ్యాస లక్ష్యాలు", summary: "వర్క్‌షాప్ సారాంశం", practice: "ఈ వర్క్‌షాప్‌ను అభ్యాసం చేయండి", choose: "జవాబు ఎంచుకోండి.", prev: "మునుపటి", next: "తదుపరి",
+    chartTitle: "తెలుగు అక్షరాలు మరియు బ్రెయిల్ సెల్‌లు", chartCopy: "భారతి బ్రెయిల్‌లో గుణింతాలు హల్లుకు తర్వాత పూర్తి అచ్చు సెల్‌లుగా చదవబడతాయి.", vowels: "అచ్చులు", consonants: "హల్లులు", marks: "గుర్తులు", allFilter: "అన్నీ", print: "తెలుగు పాఠ్యం", sandboxCopy: "తెలుగు పాఠ్యాన్ని టైప్ చేసి బ్రెయిల్ రూపాన్ని చూడండి.", back: "పైకి", practiceSets: "అభ్యాస సమూహాలు", question: "ప్రశ్న", correct: "సరైంది", notQuite: "సరిపోలలేదు"
+  },
+  odia: {
+    local: "ଓଡ଼ିଆ", all: "ସମସ୍ତ ଭାଷା", workshops: "କର୍ମଶାଳା", chart: "ଚାର୍ଟ", sandbox: "ଅଭ୍ୟାସ ବକ୍ସ",
+    eyebrow: "ଭାରତୀ ବ୍ରେଲ ଆରମ୍ଭ ପାଠ", hero: "ଓଡ଼ିଆ ବ୍ରେଲ ଦେଖି ଶିଖନ୍ତୁ", heroCopy: "ଓଡ଼ିଆ ଭାରତୀ ବ୍ରେଲ ସେଲ ଚିହ୍ନିବା ପାଇଁ ଅଭ୍ୟାସ ପୃଷ୍ଠା.",
+    path: "ପ୍ରସ୍ତାବିତ ପଥ", pathCopy: "ସ୍ୱର, ବ୍ୟଞ୍ଜନ, ଚିହ୍ନ, ଶବ୍ଦ ଓ ଛୋଟ ପାଠ ଅଭ୍ୟାସ କରନ୍ତୁ.", series: "କର୍ମଶାଳା ଶୃଙ୍ଖଳା", build: "ଛୋଟ ଦଳରେ ପରିଚୟ ଗଢ଼ନ୍ତୁ", full: "ପୂର୍ଣ୍ଣ କର୍ମଶାଳା", oneAtATime: "ଏକ ସମୟରେ ଗୋଟିଏ ସେଲ ଶିଖନ୍ତୁ",
+    goals: "ଶିକ୍ଷା ଲକ୍ଷ୍ୟ", summary: "କର୍ମଶାଳା ସାରାଂଶ", practice: "ଏହି କର୍ମଶାଳା ଅଭ୍ୟାସ କରନ୍ତୁ", choose: "ଉତ୍ତର ବାଛନ୍ତୁ.", prev: "ପୂର୍ବ", next: "ପରବର୍ତ୍ତୀ",
+    chartTitle: "ଓଡ଼ିଆ ଅକ୍ଷର ଓ ବ୍ରେଲ ସେଲ", chartCopy: "ଭାରତୀ ବ୍ରେଲରେ ସ୍ୱରଚିହ୍ନକୁ ବ୍ୟଞ୍ଜନ ପରେ ପୂର୍ଣ୍ଣ ସ୍ୱର ସେଲ ଭାବେ ପଢ଼ାଯାଏ.", vowels: "ସ୍ୱର", consonants: "ବ୍ୟଞ୍ଜନ", marks: "ଚିହ୍ନ", allFilter: "ସମସ୍ତ", print: "ଓଡ଼ିଆ ପାଠ୍ୟ", sandboxCopy: "ଓଡ଼ିଆ ପାଠ୍ୟ ଟାଇପ କରି ବ୍ରେଲ ରୂପ ଦେଖନ୍ତୁ.", back: "ଉପରକୁ", practiceSets: "ଅଭ୍ୟାସ ଦଳ", question: "ପ୍ରଶ୍ନ", correct: "ଠିକ", notQuite: "ପୂରା ଠିକ ନୁହେଁ"
+  },
+  bengali: {
+    local: "বাংলা", all: "সব ভাষা", workshops: "কর্মশালা", chart: "চার্ট", sandbox: "অনুশীলন বাক্স",
+    eyebrow: "ভারতী ব্রেইল প্রাথমিক পাঠ", hero: "বাংলা ব্রেইল দেখে শিখুন", heroCopy: "বাংলা ভারতী ব্রেইল সেল দেখে চিনতে সাহায্য করার অনুশীলন পৃষ্ঠা.",
+    path: "প্রস্তাবিত পথ", pathCopy: "স্বর, ব্যঞ্জন, চিহ্ন, শব্দ এবং ছোট পাঠ অনুশীলন করুন.", series: "কর্মশালা সিরিজ", build: "ছোট দলে পরিচিতি তৈরি করুন", full: "পূর্ণ কর্মশালা", oneAtATime: "একবারে একটি সেল শিখুন",
+    goals: "শেখার লক্ষ্য", summary: "কর্মশালার সারাংশ", practice: "এই কর্মশালা অনুশীলন করুন", choose: "একটি উত্তর বেছে নিন.", prev: "আগের", next: "পরের",
+    chartTitle: "বাংলা অক্ষর ও ব্রেইল সেল", chartCopy: "ভারতী ব্রেইলে স্বরচিহ্ন ব্যঞ্জনের পরে পূর্ণ স্বর সেল হিসেবে পড়া হয়.", vowels: "স্বর", consonants: "ব্যঞ্জন", marks: "চিহ্ন", allFilter: "সব", print: "বাংলা লেখা", sandboxCopy: "বাংলা লেখা টাইপ করে ব্রেইল রূপ দেখুন.", back: "উপরে যান", practiceSets: "অনুশীলন সেট", question: "প্রশ্ন", correct: "সঠিক", notQuite: "পুরো ঠিক নয়"
+  },
+  marathi: {
+    local: "मराठी", all: "सर्व भाषा", workshops: "कार्यशाळा", chart: "तक्ता", sandbox: "सराव पेटी",
+    eyebrow: "भारती ब्रेल प्रारंभिक धडा", hero: "मराठी ब्रेल पाहून शिका", heroCopy: "मराठी भारती ब्रेल सेल पाहून ओळखण्यासाठी सराव पान.",
+    path: "सुचवलेला क्रम", pathCopy: "स्वर, व्यंजन, चिन्हे, शब्द आणि लहान वाचन सराव क्रमाने शिका.", series: "कार्यशाळा मालिका", build: "लहान गटांमध्ये ओळख वाढवा", full: "पूर्ण कार्यशाळा", oneAtATime: "एकावेळी एक सेल शिका",
+    goals: "शिकण्याची उद्दिष्टे", summary: "कार्यशाळा सारांश", practice: "ही कार्यशाळा सराव करा", choose: "उत्तर निवडा.", prev: "मागील", next: "पुढील",
+    chartTitle: "मराठी अक्षरे आणि ब्रेल सेल", chartCopy: "भारती ब्रेलमध्ये मात्रा व्यंजनानंतर पूर्ण स्वर सेल म्हणून वाचली जाते.", vowels: "स्वर", consonants: "व्यंजन", marks: "चिन्हे", allFilter: "सर्व", print: "मराठी मजकूर", sandboxCopy: "मराठी मजकूर टाइप करून ब्रेल रूप पाहा.", back: "वर जा", practiceSets: "सराव संच", question: "प्रश्न", correct: "बरोबर", notQuite: "पूर्ण बरोबर नाही"
+  },
+  gujarati: {
+    local: "ગુજરાતી", all: "બધી ભાષાઓ", workshops: "વર્કશોપ", chart: "ચાર્ટ", sandbox: "અભ્યાસ બોક્સ",
+    eyebrow: "ભારતી બ્રેઇલ પ્રારંભિક પાઠ", hero: "ગુજરાતી બ્રેઇલ જોઈને શીખો", heroCopy: "ગુજરાતી ભારતી બ્રેઇલ સેલ જોઈને ઓળખવા માટેનું અભ્યાસ પાનું.",
+    path: "સૂચિત માર્ગ", pathCopy: "સ્વર, વ્યંજન, ચિહ્નો, શબ્દો અને ટૂંકા વાંચન અભ્યાસ શીખો.", series: "વર્કશોપ શ્રેણી", build: "નાના સમૂહોમાં ઓળખ વિકસાવો", full: "પૂર્ણ વર્કશોપ", oneAtATime: "એક સમયે એક સેલ શીખો",
+    goals: "શીખવાના લક્ષ્યો", summary: "વર્કશોપ સારાંશ", practice: "આ વર્કશોપનો અભ્યાસ કરો", choose: "જવાબ પસંદ કરો.", prev: "પાછળ", next: "આગળ",
+    chartTitle: "ગુજરાતી અક્ષરો અને બ્રેઇલ સેલ", chartCopy: "ભારતી બ્રેઇલમાં માત્રા વ્યંજન પછી સંપૂર્ણ સ્વર સેલ તરીકે વાંચાય છે.", vowels: "સ્વર", consonants: "વ્યંજન", marks: "ચિહ્નો", allFilter: "બધું", print: "ગુજરાતી લખાણ", sandboxCopy: "ગુજરાતી લખાણ ટાઇપ કરીને બ્રેઇલ રૂપ જુઓ.", back: "ઉપર જાઓ", practiceSets: "અભ્યાસ સમૂહ", question: "પ્રશ્ન", correct: "સાચું", notQuite: "પૂરું સાચું નથી"
+  }
+};
+
 function standardRows(serialized, clusters = []) {
   const keys = [
     ["k", "kh", "g", "gh", "ng"],
@@ -79,6 +141,7 @@ function standardRows(serialized, clusters = []) {
 
 const courseKey = document.body.dataset.course;
 const course = languageData[courseKey] || languageData.hindi;
+let textMode = localStorage.getItem(`text-mode-${courseKey || "landing"}`) || "en";
 const chart = buildChart(course);
 const vowelSigns = Object.fromEntries(course.signs);
 const directMap = Object.fromEntries(chart.map(([print, , braille]) => [print, braille]));
@@ -88,6 +151,38 @@ const punctuation = { ",": "⠂", ";": "⠆", ":": "⠒", ".": "⠲", "?": "⠦"
 const lessons = buildLessons(course);
 const quizState = new Map();
 const cellState = new Map();
+
+function ui(key, fallback) {
+  if (textMode === "regional" && courseKey && uiText[courseKey]?.[key]) return uiText[courseKey][key];
+  return fallback;
+}
+
+function makeLanguageToggle() {
+  const nav = document.querySelector("nav");
+  if (!nav) return;
+  const toggle = document.createElement("div");
+  toggle.className = "language-toggle";
+  toggle.setAttribute("aria-label", "Text language");
+  toggle.innerHTML = `
+    <button type="button" data-text-mode="en">English</button>
+    <button type="button" data-text-mode="regional">${courseKey ? uiText[courseKey].local : "Regional"}</button>
+  `;
+  nav.appendChild(toggle);
+  toggle.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-text-mode]");
+    if (!button) return;
+    textMode = button.dataset.textMode;
+    localStorage.setItem(`text-mode-${courseKey || "landing"}`, textMode);
+    renderAll();
+  });
+  updateLanguageToggle();
+}
+
+function updateLanguageToggle() {
+  document.querySelectorAll("[data-text-mode]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.textMode === textMode);
+  });
+}
 
 function buildChart(data) {
   const vowels = data.vowels.map(([print, key]) => [print, key, brailleMap[key], dotsFor(brailleMap[key]), "vowel"]);
@@ -231,19 +326,40 @@ const brailleOutput = document.querySelector("#brailleOutput");
 
 function setupPageText() {
   document.title = `${course.name} Braille by Sight`;
-  setText("#brandName", `${course.name} Braille by Sight`);
-  setText("#hero-title", `Learn ${course.name} Braille by seeing`);
-  setText("#heroCopy", `A workshop-style page for sighted learners who want to recognize ${course.name} Bharati Braille cells.`);
-  setText("#pathCopy", "Start with vowels and common consonants, then move to marks, words, and short reading drills.");
-  setText("#workshopCopy", "Each workshop introduces one cell at a time, then gives focused practice for the same section.");
-  setText("#chartTitle", `${course.name} letters and braille cells`);
-  setText("#chartCopy", "Bharati Braille writes vowel signs as full braille letters after the consonant sound.");
-  setText("#sandboxLabel", `${course.name} print`);
-  setText("#sandboxCopy", `Type ${course.name} text to see a learning-oriented braille rendering.`);
+  setText("#brandName", textMode === "regional" ? `${ui("local", course.name)} Braille` : `${course.name} Braille by Sight`);
+  setText("#courseEyebrow", ui("eyebrow", "Bharati Braille starter course"));
+  setText("#hero-title", ui("hero", `Learn ${course.name} Braille by seeing`));
+  setText("#heroCopy", ui("heroCopy", `A workshop-style page for sighted learners who want to recognize ${course.name} Bharati Braille cells.`));
+  setText("#path-title", ui("path", "Suggested path"));
+  setText("#pathCopy", ui("pathCopy", "Start with vowels and common consonants, then move to marks, words, and short reading drills."));
+  setText("#workshopCopy", ui("workshopCopy", "Each workshop introduces one cell at a time, then gives focused practice for the same section."));
+  setText("#chartTitle", ui("chartTitle", `${course.name} letters and braille cells`));
+  setText("#chartCopy", ui("chartCopy", "Bharati Braille writes vowel signs as full braille letters after the consonant sound."));
+  setText("#sandboxLabel", ui("print", `${course.name} print`));
+  setText("#sandboxCopy", ui("sandboxCopy", `Type ${course.name} text to see a learning-oriented braille rendering.`));
   setText("#footerName", `${course.name} Braille by Sight`);
+  document.querySelectorAll("nav a").forEach((link) => {
+    if (link.getAttribute("href") === "index.html#languages") link.textContent = ui("all", "All languages");
+    if (link.getAttribute("href") === "#workshops") link.textContent = ui("workshops", "Workshops");
+    if (link.getAttribute("href") === "#chart") link.textContent = ui("chart", "Chart");
+    if (link.getAttribute("href") === "#sandbox") link.textContent = ui("sandbox", "Sandbox");
+  });
+  document.querySelectorAll(".section-heading .eyebrow").forEach((item) => {
+    if (item.textContent.includes("Workshop")) item.textContent = ui("full", "Full workshops");
+    if (item.textContent.includes("Reference")) item.textContent = ui("chart", "Reference chart");
+  });
+  document.querySelector("#series .eyebrow").textContent = ui("series", "Workshop series");
+  document.querySelector("#series h2").textContent = ui("build", "Build recognition in small sets");
+  document.querySelector("#workshops-title")?.replaceChildren(document.createTextNode(ui("workshops", "Workshops")));
+  document.querySelectorAll("[data-chart-filter='all']").forEach((button) => { button.textContent = ui("allFilter", "All"); });
+  document.querySelectorAll("[data-chart-filter='vowel']").forEach((button) => { button.textContent = ui("vowels", "Vowels"); });
+  document.querySelectorAll("[data-chart-filter='consonant']").forEach((button) => { button.textContent = ui("consonants", "Consonants"); });
+  document.querySelectorAll("[data-chart-filter='mark']").forEach((button) => { button.textContent = ui("marks", "Marks"); });
+  document.querySelector(".site-footer a").textContent = ui("back", "Back to top");
   const workshopCount = document.querySelector(".stats strong");
   if (workshopCount) workshopCount.textContent = lessons.length;
   textInput.value = course.sample;
+  updateLanguageToggle();
 }
 
 function setText(selector, value) {
@@ -265,9 +381,9 @@ function renderWorkshopDetails() {
   workshopDetails.innerHTML = lessons.map((lesson, index) => `
     <article class="workshop-detail" id="${lesson.slug}">
       <div class="workshop-detail-header"><div><p class="eyebrow">Workshop ${index + 1}</p><h3>${lesson.title}</h3><p>${lesson.introduction}</p></div><div class="workshop-badge" aria-hidden="true"><span>${renderBrailleCells(lesson.icon)}</span><strong>${lesson.time}</strong></div></div>
-      <div class="lesson-two-column"><section><h4>Learning goals</h4><ul class="objective-list">${lesson.objectives.map((objective) => `<li>${objective}</li>`).join("")}</ul></section><section class="cell-stepper" data-cell-stepper="${lesson.slug}" aria-live="polite"><div class="cell-stepper-heading"><h4>Learn one cell at a time</h4><span class="cell-step-count"></span></div><div class="cell-step-card"><span class="cell-step-print"></span><span class="cell-step-braille"></span><span class="cell-step-note"></span></div><div class="step-controls"><button class="button secondary dark-text" type="button" data-prev-cell="${lesson.slug}">Previous</button><button class="button primary" type="button" data-next-cell="${lesson.slug}">Next</button></div></section></div>
-      <button class="button summary-button" type="button" data-summary="${lesson.slug}">Workshop summary</button>
-      <section class="section-quiz" data-workshop-quiz="${lesson.slug}" aria-live="polite"><div class="section-quiz-copy"><h4>Practice this workshop</h4><p>Use Previous and Next to move through this workshop's practice pool.</p></div><div class="section-quiz-panel"><div class="section-quiz-prompt"><span class="section-quiz-braille"></span><span class="section-quiz-help"></span></div><div class="section-quiz-choices"></div><div class="section-quiz-footer"><p class="section-quiz-feedback">Choose an answer to begin.</p><div class="step-controls"><button class="button secondary dark-text" type="button" data-prev-workshop="${lesson.slug}">Previous</button><button class="button primary" type="button" data-next-workshop="${lesson.slug}">Next</button></div></div></div></section>
+      <div class="lesson-two-column"><section><h4>${ui("goals", "Learning goals")}</h4><ul class="objective-list">${lesson.objectives.map((objective) => `<li>${objective}</li>`).join("")}</ul></section><section class="cell-stepper" data-cell-stepper="${lesson.slug}" aria-live="polite"><div class="cell-stepper-heading"><h4>${ui("oneAtATime", "Learn one cell at a time")}</h4><span class="cell-step-count"></span></div><div class="cell-step-card"><span class="cell-step-print"></span><span class="cell-step-braille"></span><span class="cell-step-note"></span></div><div class="step-controls"><button class="button secondary dark-text" type="button" data-prev-cell="${lesson.slug}">${ui("prev", "Previous")}</button><button class="button primary" type="button" data-next-cell="${lesson.slug}">${ui("next", "Next")}</button></div></section></div>
+      <button class="button summary-button" type="button" data-summary="${lesson.slug}">${ui("summary", "Workshop summary")}</button>
+      <section class="section-quiz" data-workshop-quiz="${lesson.slug}" aria-live="polite"><div class="section-quiz-copy"><h4>${ui("practice", "Practice this workshop")}</h4><p>${ui("quizCopy", "Use Previous and Next to move through this workshop's practice pool.")}</p></div><div class="section-quiz-panel"><div class="section-quiz-prompt"><span class="section-quiz-braille"></span><span class="section-quiz-help"></span></div><div class="section-quiz-choices"></div><div class="section-quiz-footer"><p class="section-quiz-feedback">${ui("choose", "Choose an answer to begin.")}</p><div class="step-controls"><button class="button secondary dark-text" type="button" data-prev-workshop="${lesson.slug}">${ui("prev", "Previous")}</button><button class="button primary" type="button" data-next-workshop="${lesson.slug}">${ui("next", "Next")}</button></div></div></div></section>
     </article>
   `).join("");
 }
@@ -287,7 +403,7 @@ function renderCellStep(slug) {
   stepper.querySelector(".cell-step-count").textContent = `${index + 1} of ${lesson.focus.length}`;
   stepper.querySelector(".cell-step-print").textContent = item;
   stepper.querySelector(".cell-step-braille").innerHTML = renderBrailleCells(translateText(item));
-  stepper.querySelector(".cell-step-note").textContent = "Read the print, then name the braille cell.";
+  stepper.querySelector(".cell-step-note").textContent = ui("cellNote", "Read the print, then name the braille cell.");
   stepper.querySelector("[data-prev-cell]").disabled = index === 0;
   stepper.querySelector("[data-next-cell]").disabled = index === lesson.focus.length - 1;
 }
@@ -328,8 +444,8 @@ function renderWorkshopQuestion(slug) {
   }
   const answer = state.pool[state.index];
   quiz.querySelector(".section-quiz-braille").innerHTML = renderBrailleCells(answer.braille);
-  quiz.querySelector(".section-quiz-help").textContent = `Question ${state.index + 1} of ${state.pool.length}`;
-  quiz.querySelector(".section-quiz-feedback").textContent = "Choose an answer to begin.";
+  quiz.querySelector(".section-quiz-help").textContent = `${ui("question", "Question")} ${state.index + 1} of ${state.pool.length}`;
+  quiz.querySelector(".section-quiz-feedback").textContent = ui("choose", "Choose an answer to begin.");
   quiz.querySelector(".section-quiz-choices").innerHTML = buildOptions(state.pool, answer, state.index).map((item) => `<button type="button" data-workshop-answer="${slug}" data-answer="${item.print}">${item.print}</button>`).join("");
   quiz.querySelector("[data-prev-workshop]").disabled = state.index === 0;
   quiz.querySelector("[data-next-workshop]").disabled = state.index === state.pool.length - 1;
@@ -352,7 +468,7 @@ function answerWorkshopQuestion(button) {
     if (choice.dataset.answer === answer.print) choice.classList.add("correct");
   });
   if (!correct) button.classList.add("incorrect");
-  quiz.querySelector(".section-quiz-feedback").textContent = correct ? `Correct: ${answer.print}.` : `Not quite. This is ${answer.print}.`;
+  quiz.querySelector(".section-quiz-feedback").textContent = correct ? `${ui("correct", "Correct")}: ${answer.print}.` : `${ui("notQuite", "Not quite")}. ${answer.print}.`;
 }
 
 function setupWorkshopQuizzes() {
@@ -361,7 +477,8 @@ function setupWorkshopQuizzes() {
 
 function renderSummary(lesson) {
   summaryTitle.textContent = lesson.title;
-  summaryBody.innerHTML = `<section><h3>Learning goals</h3><ul class="objective-list">${lesson.objectives.map((objective) => `<li>${objective}</li>`).join("")}</ul></section><section><h3>Practice sets</h3><div class="practice-set-grid">${lesson.practiceSets.map((set) => `<section class="practice-set"><h4>${set.title}</h4><p>${set.instruction}</p><div class="drill-list">${set.items.map((item) => `<span class="drill-chip"><strong>${item}</strong><em>${renderBrailleCells(translateText(item))}</em></span>`).join("")}</div></section>`).join("")}</div></section>`;
+  document.querySelector(".summary-modal-header .eyebrow").textContent = ui("summary", "Workshop summary");
+  summaryBody.innerHTML = `<section><h3>${ui("goals", "Learning goals")}</h3><ul class="objective-list">${lesson.objectives.map((objective) => `<li>${objective}</li>`).join("")}</ul></section><section><h3>${ui("practiceSets", "Practice sets")}</h3><div class="practice-set-grid">${lesson.practiceSets.map((set) => `<section class="practice-set"><h4>${set.title}</h4><p>${set.instruction}</p><div class="drill-list">${set.items.map((item) => `<span class="drill-chip"><strong>${item}</strong><em>${renderBrailleCells(translateText(item))}</em></span>`).join("")}</div></section>`).join("")}</div></section>`;
 }
 
 function openSummary(slug) {
@@ -411,6 +528,19 @@ function updateSandbox() {
   brailleOutput.innerHTML = renderBrailleCells(translateText(textInput.value));
 }
 
+function renderAll() {
+  quizState.clear();
+  cellState.clear();
+  setupPageText();
+  renderLessons();
+  renderWorkshopDetails();
+  renderStaticBraille();
+  setupCellSteppers();
+  setupWorkshopQuizzes();
+  renderChart(document.querySelector("[data-chart-filter].active")?.dataset.chartFilter || "all");
+  updateSandbox();
+}
+
 if (courseKey) {
   chartButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -444,14 +574,9 @@ if (courseKey) {
   });
   textInput.addEventListener("input", updateSandbox);
 
-  setupPageText();
-  renderLessons();
-  renderWorkshopDetails();
-  renderStaticBraille();
-  setupCellSteppers();
-  setupWorkshopQuizzes();
-  renderChart();
-  updateSandbox();
+  makeLanguageToggle();
+  renderAll();
 } else {
+  makeLanguageToggle();
   renderStaticBraille();
 }
