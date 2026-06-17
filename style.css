@@ -802,29 +802,6 @@ nav a:focus-visible {
   gap: 12px;
 }
 
-.practice-category-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.practice-category {
-  display: grid;
-  align-content: start;
-  gap: 10px;
-  min-width: 0;
-  padding: 12px;
-  border: 1px solid #cfe0e6;
-  border-radius: 8px;
-  background: #fff;
-}
-
-.practice-category h5 {
-  margin: 0;
-  font-size: 0.95rem;
-  color: var(--ink);
-}
-
 .practice-type-label {
   margin: 0;
   width: fit-content;
@@ -1171,10 +1148,6 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 
-  .practice-category-grid {
-    grid-template-columns: 1fr;
-  }
-
   .hero {
     min-height: auto;
   }
@@ -1220,7 +1193,6 @@ textarea:focus {
   .chart-grid,
   .language-grid,
   .practice-set-grid,
-  .practice-category-grid,
   .lesson-two-column,
   .section-quiz,
   .section-quiz-choices,

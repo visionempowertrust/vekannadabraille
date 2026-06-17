@@ -488,14 +488,11 @@ function renderLessons() {
 }
 
 function useSinglePracticePilot(lesson) {
-  return courseKey === "tamil" && lesson.slug === lessons[0]?.slug;
+  return true;
 }
 
 function renderPracticePanel(lesson) {
-  if (useSinglePracticePilot(lesson)) {
-    return `<section class="section-quiz single-practice" data-lesson-quiz="${lesson.slug}" aria-live="polite"><div class="section-quiz-copy"><h4>${ui("practice", "Practice this lesson")}</h4><p>Questions appear one at a time as reading, writing, or proof reading.</p></div><div class="section-quiz-panel"><p class="practice-type-label"></p><div class="single-practice-body"></div><div class="section-quiz-footer"><p class="section-quiz-position"></p><div class="step-controls"><button class="button secondary dark-text" type="button" data-prev-lesson="${lesson.slug}">${ui("prev", "Previous")}</button><button class="button primary" type="button" data-next-lesson="${lesson.slug}">${ui("next", "Next")}</button></div></div></div></section>`;
-  }
-  return `<section class="section-quiz" data-lesson-quiz="${lesson.slug}" aria-live="polite"><div class="section-quiz-copy"><h4>${ui("practice", "Practice this lesson")}</h4><p>${ui("quizCopy", "Use Previous and Next to move through reading, writing, and proof reading practice.")}</p></div><div class="section-quiz-panel"><div class="practice-category-grid"><section class="practice-category"><h5>Reading</h5><div class="section-quiz-prompt"><span class="section-quiz-braille"></span><span class="section-quiz-help"></span></div><div class="section-quiz-choices"></div><p class="section-quiz-feedback">${ui("choose", "Choose an answer to begin.")}</p></section><section class="practice-category"><h5>Writing</h5><p class="practice-prompt writing-prompt"></p><div class="writing-cells"></div><button class="button secondary dark-text" type="button" data-check-writing="${lesson.slug}">Check writing</button><p class="writing-feedback"></p></section><section class="practice-category"><h5>Proof reading</h5><p class="practice-prompt proof-prompt"></p><div class="proof-cells"></div><p class="proof-feedback"></p></section></div><div class="section-quiz-footer"><p class="section-quiz-position"></p><div class="step-controls"><button class="button secondary dark-text" type="button" data-prev-lesson="${lesson.slug}">${ui("prev", "Previous")}</button><button class="button primary" type="button" data-next-lesson="${lesson.slug}">${ui("next", "Next")}</button></div></div></div></section>`;
+  return `<section class="section-quiz single-practice" data-lesson-quiz="${lesson.slug}" aria-live="polite"><div class="section-quiz-copy"><h4>${ui("practice", "Practice this lesson")}</h4><p>Questions appear one at a time as reading, writing, or proof reading.</p></div><div class="section-quiz-panel"><p class="practice-type-label"></p><div class="single-practice-body"></div><div class="section-quiz-footer"><p class="section-quiz-position"></p><div class="step-controls"><button class="button secondary dark-text" type="button" data-prev-lesson="${lesson.slug}">${ui("prev", "Previous")}</button><button class="button primary" type="button" data-next-lesson="${lesson.slug}">${ui("next", "Next")}</button></div></div></div></section>`;
 }
 
 function renderLessonDetails() {

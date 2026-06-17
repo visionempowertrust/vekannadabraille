@@ -546,36 +546,14 @@ function renderLessonDetails() {
 
       <button class="button summary-button" type="button" data-summary="${lesson.slug}">${ui("summary", "Lesson summary")}</button>
 
-      <section class="section-quiz" data-lesson-quiz="${lesson.slug}" aria-label="${lesson.title} quiz" aria-live="polite">
+      <section class="section-quiz single-practice" data-lesson-quiz="${lesson.slug}" aria-label="${lesson.title} quiz" aria-live="polite">
         <div class="section-quiz-copy">
           <h4>${ui("practice", "Practice this lesson")}</h4>
-          <p>${ui("quizCopy", "Use Previous and Next to move through reading, writing, and proof reading practice.")}</p>
+          <p>${ui("quizCopy", "Questions appear one at a time as reading, writing, or proof reading.")}</p>
         </div>
         <div class="section-quiz-panel">
-          <div class="practice-category-grid">
-            <section class="practice-category">
-              <h5>Reading</h5>
-              <div class="section-quiz-prompt">
-                <span class="section-quiz-braille"></span>
-                <span class="section-quiz-help"></span>
-              </div>
-              <div class="section-quiz-choices"></div>
-              <p class="section-quiz-feedback">${ui("choose", "Choose an answer to begin.")}</p>
-            </section>
-            <section class="practice-category">
-              <h5>Writing</h5>
-              <p class="practice-prompt writing-prompt"></p>
-              <div class="writing-cells"></div>
-              <button class="button secondary dark-text" type="button" data-check-writing="${lesson.slug}">Check writing</button>
-              <p class="writing-feedback"></p>
-            </section>
-            <section class="practice-category">
-              <h5>Proof reading</h5>
-              <p class="practice-prompt proof-prompt"></p>
-              <div class="proof-cells"></div>
-              <p class="proof-feedback"></p>
-            </section>
-          </div>
+          <p class="practice-type-label"></p>
+          <div class="single-practice-body"></div>
           <div class="section-quiz-footer">
             <p class="section-quiz-position"></p>
             <div class="step-controls">
@@ -702,6 +680,35 @@ function makeProofItem(answer, index) {
   return { html, errorCell };
 }
 
+function renderProofDotChoices(slug) {
+  return `<div class="proof-dot-choices">${[1, 2, 3, 4, 5, 6].map((dot) => `<label><input type="checkbox" data-proof-dot="${slug}" value="${dot}"> ${dot}</label>`).join("")}</div><button class="button secondary dark-text" type="button" data-check-proof-dots="${slug}">Check dots</button>`;
+}
+
+function renderSinglePracticeQuestion(lesson, quiz, state, answer, options) {
+  const type = ["reading", "writing", "proof"][state.index % 3];
+  const body = quiz.querySelector(".single-practice-body");
+  quiz.querySelector(".practice-type-label").textContent = type === "reading" ? "Reading" : type === "writing" ? "Writing" : "Proof reading";
+  quiz.querySelector(".section-quiz-position").textContent = `${state.index + 1} of ${state.pool.length}`;
+
+  if (type === "reading") {
+    body.innerHTML = `<div class="section-quiz-prompt"><span class="section-quiz-braille">${renderBrailleCells(answer.braille)}</span><span class="section-quiz-help">${regionalMode() ? `${ui("question", "Question")} ${state.index + 1} / ${state.pool.length}` : `${ui("question", "Question")} ${state.index + 1} of ${state.pool.length}`}</span></div><div class="section-quiz-choices">${options.map((item) => `<button type="button" data-lesson-answer="${lesson.slug}" data-answer="${item.print}">${item.print}</button>`).join("")}</div><p class="section-quiz-feedback">${ui("choose", "Choose an answer to begin.")}</p>`;
+    return;
+  }
+
+  if (type === "writing") {
+    const cells = getBrailleCells(answer.braille);
+    body.innerHTML = `<p class="practice-prompt writing-prompt">Write: ${answer.print}</p><div class="writing-cells">${renderWritingCells(lesson.slug, cells, state.writing)}</div><button class="button secondary dark-text" type="button" data-check-writing="${lesson.slug}">Check writing</button><p class="writing-feedback">Select dots, then check writing.</p>`;
+    return;
+  }
+
+  const proof = makeProofItem(answer, state.index);
+  state.proofError = proof.errorCell;
+  const cells = getBrailleCells(answer.braille);
+  state.proofErrorDots = cells[proof.errorCell] ? [((state.index % 6) + 1)] : [];
+  const isSingleCell = cells.length === 1;
+  body.innerHTML = `<p class="practice-prompt proof-prompt">Proof read: ${answer.print}</p><div class="proof-cells">${proof.html}</div>${isSingleCell ? `<p class="practice-prompt">Which dot has the error?</p>${renderProofDotChoices(lesson.slug)}<p class="proof-feedback">Select the wrong dot number.</p>` : `<p class="proof-feedback">Choose the cell that contains the error.</p>`}`;
+}
+
 function renderLessonQuestion(slug) {
   const lesson = lessons.find((item) => item.slug === slug);
   const quiz = lessonDetails.querySelector(`[data-lesson-quiz="${slug}"]`);
@@ -723,23 +730,9 @@ function renderLessonQuestion(slug) {
     state.writing = emptyWriting(cells);
     state.writingKey = state.index;
   }
-  const proof = makeProofItem(answer, state.index);
   const options = buildOptions(state.pool, answer, state.index);
 
-  quiz.querySelector(".section-quiz-braille").innerHTML = renderBrailleCells(answer.braille);
-  quiz.querySelector(".section-quiz-help").textContent = regionalMode() ? `${ui("question", "Question")} ${state.index + 1} / ${state.pool.length}` : `${ui("question", "Question")} ${state.index + 1} of ${state.pool.length}`;
-  quiz.querySelector(".section-quiz-feedback").textContent = ui("choose", "Choose an answer to begin.");
-  quiz.querySelector(".section-quiz-choices").innerHTML = options.map((item) => `
-    <button type="button" data-lesson-answer="${slug}" data-answer="${item.print}">${item.print}</button>
-  `).join("");
-  quiz.querySelector(".writing-prompt").textContent = `Write: ${answer.print}`;
-  quiz.querySelector(".writing-cells").innerHTML = renderWritingCells(slug, cells, state.writing);
-  quiz.querySelector(".writing-feedback").textContent = "Select dots, then check writing.";
-  quiz.querySelector(".proof-prompt").textContent = `Find the wrong braille cell for: ${answer.print}`;
-  quiz.querySelector(".proof-cells").innerHTML = proof.html;
-  quiz.querySelector(".proof-feedback").textContent = "Choose the cell that contains the error.";
-  state.proofError = proof.errorCell;
-  quiz.querySelector(".section-quiz-position").textContent = `${state.index + 1} of ${state.pool.length}`;
+  renderSinglePracticeQuestion(lesson, quiz, state, answer, options);
   quiz.querySelector("[data-prev-lesson]").disabled = state.index === 0;
   quiz.querySelector("[data-next-lesson]").disabled = state.index === state.pool.length - 1;
 }
@@ -813,10 +806,22 @@ function answerProofCell(button) {
   const state = quizState.get(slug);
   const quiz = button.closest(".section-quiz");
   if (!state || !quiz) return;
+  if (quiz.querySelectorAll("[data-proof-cell]").length === 1) return;
   const selected = Number(button.dataset.proofIndex);
   [...quiz.querySelectorAll("[data-proof-cell]")].forEach((cell) => cell.classList.remove("correct", "incorrect"));
   button.classList.add(selected === state.proofError ? "correct" : "incorrect");
   quiz.querySelector(".proof-feedback").textContent = selected === state.proofError ? "Correct. That cell has the error." : "Not quite. Try another cell.";
+}
+
+function checkProofDots(button) {
+  const slug = button.dataset.checkProofDots;
+  const state = quizState.get(slug);
+  const quiz = button.closest(".section-quiz");
+  if (!state || !quiz) return;
+  const selected = [...quiz.querySelectorAll("[data-proof-dot]:checked")].map((input) => Number(input.value)).sort((a, b) => a - b);
+  const expected = [...(state.proofErrorDots || [])].sort((a, b) => a - b);
+  const correct = selected.length === expected.length && selected.every((dot, index) => dot === expected[index]);
+  quiz.querySelector(".proof-feedback").textContent = correct ? "Correct. That dot has the error." : "Not quite. Check the dot numbers again.";
 }
 
 function setupLessonQuizzes() {
@@ -964,6 +969,12 @@ lessonDetails.addEventListener("click", (event) => {
   const checkWritingButton = event.target.closest("[data-check-writing]");
   if (checkWritingButton) {
     checkWriting(checkWritingButton);
+    return;
+  }
+
+  const checkProofDotsButton = event.target.closest("[data-check-proof-dots]");
+  if (checkProofDotsButton) {
+    checkProofDots(checkProofDotsButton);
     return;
   }
 
