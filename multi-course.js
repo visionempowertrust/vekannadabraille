@@ -1,3 +1,11 @@
+const accessibilityStyles = document.createElement("link");
+accessibilityStyles.rel = "stylesheet";
+accessibilityStyles.href = "accessibility.css?v=20260618-2";
+document.head.appendChild(accessibilityStyles);
+const accessibilityScript = document.createElement("script");
+accessibilityScript.src = "accessibility.js?v=20260618-2";
+document.head.appendChild(accessibilityScript);
+
 const brailleMap = {
   a: "⠁", aa: "⠜", i: "⠊", ii: "⠔", u: "⠥", uu: "⠳", e: "⠢", ee: "⠑", ai: "⠌", o: "⠭", oo: "⠕", au: "⠪", rVowel: "⠐⠗",
   k: "⠅", kh: "⠨", g: "⠛", gh: "⠣", ng: "⠬", ch: "⠉", chh: "⠡", j: "⠚", jh: "⠴", ny: "⠒",
@@ -192,6 +200,7 @@ function updateLanguageToggle() {
     if (button.dataset.textMode === "en") button.textContent = textMode === "regional" ? "A" : "English";
     if (button.dataset.textMode === "regional") button.textContent = courseKey ? uiText[courseKey].local : "Regional";
     button.classList.toggle("active", button.dataset.textMode === textMode);
+    button.setAttribute("aria-pressed", String(button.dataset.textMode === textMode));
   });
 }
 
@@ -394,7 +403,8 @@ function brailleDotNumbers(char) {
 
 function renderBrailleCell(char) {
   const activeDots = brailleDotNumbers(char);
-  return `<span class="visual-braille-cell" role="img" aria-label="dots ${activeDots.join("-")}">${[1, 2, 3, 4, 5, 6].map((dot) => `<span class="visual-braille-dot${activeDots.includes(dot) ? " active" : ""}" data-dot="${dot}"></span>`).join("")}</span>`;
+  const dots = activeDots.length ? activeDots.join(", ") : "none";
+  return `<span class="braille-accessible-cell"><span class="visual-braille-cell" aria-hidden="true">${[1, 2, 3, 4, 5, 6].map((dot) => `<span class="visual-braille-dot${activeDots.includes(dot) ? " active" : ""}" data-dot="${dot}"></span>`).join("")}</span><span class="sr-only" translate="no">Braille ${escapeHtml(char)}, dots ${dots}.</span></span>`;
 }
 
 function renderBrailleCells(value) {
@@ -427,8 +437,8 @@ function setupPageText() {
   document.title = `${course.name} Braille by Sight`;
   setText("#brandName", textMode === "regional" ? ui("local", course.name) : `${course.name} Braille by Sight`);
   setText("#courseEyebrow", ui("eyebrow", "Bharati Braille starter course"));
-  setText("#hero-title", ui("hero", `Learn ${course.name} Braille by seeing`));
-  setText("#heroCopy", ui("heroCopy", `A lesson-style page for sighted learners who want to recognize ${course.name} Bharati Braille cells.`));
+  setText("#hero-title", ui("hero", `Learn ${course.name} Braille by sight or touch`));
+  setText("#heroCopy", ui("heroCopy", `Lessons for recognizing ${course.name} Bharati Braille visually or on a refreshable Braille display.`));
   setText("#path-title", ui("path", "Suggested path"));
   setText("#pathCopy", ui("pathCopy", "Start with vowels and common consonants, then move to marks, words, and short reading drills."));
   setText("#lessonCopy", ui("lessonCopy", "Each lesson introduces one cell at a time, then gives focused practice for the same section."));
@@ -488,14 +498,14 @@ function renderLessons() {
 }
 
 function renderPracticePanel(lesson) {
-  return `<section class="section-quiz single-practice" data-lesson-quiz="${lesson.slug}" aria-live="polite"><div class="section-quiz-copy"><h4>${ui("practice", "Practice this lesson")}</h4><p>Questions appear one at a time as reading, writing, or proof reading.</p></div><div class="section-quiz-panel"><p class="practice-type-label"></p><div class="single-practice-body"></div><div class="section-quiz-footer"><p class="section-quiz-position"></p><div class="step-controls"><button class="button secondary dark-text" type="button" data-prev-lesson="${lesson.slug}">${ui("prev", "Previous")}</button><button class="button primary" type="button" data-next-lesson="${lesson.slug}">${ui("next", "Next")}</button></div></div></div></section>`;
+  return `<section class="section-quiz single-practice" data-lesson-quiz="${lesson.slug}" aria-label="${escapeHtml(displayLessonTitle(lesson))} practice"><div class="section-quiz-copy"><h4>${ui("practice", "Practice this lesson")}</h4><p>Questions appear one at a time as reading, writing, or proof reading.</p></div><div class="section-quiz-panel"><p class="practice-type-label"></p><div class="single-practice-body" role="group" aria-live="polite" aria-atomic="true"></div><div class="section-quiz-footer"><p class="section-quiz-position"></p><div class="step-controls"><button class="button secondary dark-text" type="button" data-prev-lesson="${lesson.slug}">${ui("prev", "Previous")}</button><button class="button primary" type="button" data-next-lesson="${lesson.slug}">${ui("next", "Next")}</button></div></div></div></section>`;
 }
 
 function renderLessonDetails() {
   lessonDetails.innerHTML = lessons.map((lesson, index) => `
     <article class="lesson-detail" id="${lesson.slug}">
       <div class="lesson-detail-header"><div><p class="eyebrow">${ui("lessons", "Lesson")} ${index + 1}</p><h3>${displayLessonTitle(lesson)}</h3><p>${displayLessonIntroduction(lesson)}</p></div><div class="lesson-badge" aria-hidden="true"><span>${renderBrailleCells(lesson.icon)}</span><strong>${displayTime(lesson)}</strong></div></div>
-      <div class="lesson-two-column"><section><h4>${ui("goals", "Learning goals")}</h4><ul class="objective-list">${displayObjectives(lesson).map((objective) => `<li>${objective}</li>`).join("")}</ul></section><section class="cell-stepper" data-cell-stepper="${lesson.slug}" aria-live="polite"><div class="cell-stepper-heading"><h4>${ui("oneAtATime", "Learn one cell at a time")}</h4><span class="cell-step-count"></span></div><div class="cell-step-card"><span class="cell-step-print"></span><span class="cell-step-braille"></span><span class="cell-step-note"></span></div><div class="step-controls"><button class="button secondary dark-text" type="button" data-prev-cell="${lesson.slug}">${ui("prev", "Previous")}</button><button class="button primary" type="button" data-next-cell="${lesson.slug}">${ui("next", "Next")}</button></div></section></div>
+      <div class="lesson-two-column"><section><h4>${ui("goals", "Learning goals")}</h4><ul class="objective-list">${displayObjectives(lesson).map((objective) => `<li>${objective}</li>`).join("")}</ul></section><section class="cell-stepper" data-cell-stepper="${lesson.slug}" aria-label="${escapeHtml(displayLessonTitle(lesson))} cell lesson"><div class="cell-stepper-heading"><h4>${ui("oneAtATime", "Learn one cell at a time")}</h4><span class="cell-step-count"></span></div><div class="cell-step-card" role="status" aria-live="polite" aria-atomic="true"><span class="cell-step-print"></span><span class="cell-step-braille"></span><span class="cell-step-note"></span></div><div class="step-controls"><button class="button secondary dark-text" type="button" data-prev-cell="${lesson.slug}">${ui("prev", "Previous")}</button><button class="button primary" type="button" data-next-cell="${lesson.slug}">${ui("next", "Next")}</button></div></section></div>
       <button class="button summary-button" type="button" data-summary="${lesson.slug}">${ui("summary", "Lesson summary")}</button>
       ${renderPracticePanel(lesson)}
     </article>
@@ -557,9 +567,9 @@ function emptyWriting(cells) {
 }
 
 function renderWritingCells(slug, cells, selections) {
-  return cells.map((cell, cellIndex) => `<div class="writing-cell" aria-label="Braille cell ${cellIndex + 1}">${[1, 2, 3, 4, 5, 6].map((dot) => {
+  return cells.map((cell, cellIndex) => `<div class="writing-cell" role="group" aria-label="Braille cell ${cellIndex + 1} dot selector">${[1, 2, 3, 4, 5, 6].map((dot) => {
     const active = selections[cellIndex]?.includes(dot);
-    return `<button type="button" class="writing-dot${active ? " active" : ""}" data-writing-dot="${slug}" data-cell-index="${cellIndex}" data-dot="${dot}" aria-pressed="${active ? "true" : "false"}">${dot}</button>`;
+    return `<button type="button" class="writing-dot${active ? " active" : ""}" data-writing-dot="${slug}" data-cell-index="${cellIndex}" data-dot="${dot}" aria-label="Cell ${cellIndex + 1}, dot ${dot}" aria-pressed="${active ? "true" : "false"}">${dot}</button>`;
   }).join("")}</div>`).join("");
 }
 
@@ -577,7 +587,8 @@ function makeProofItem(answer, index) {
     if (!isBrailleChar(char)) return char === " " ? `<span class="visual-braille-space" aria-hidden="true"></span>` : escapeHtml(char);
     const current = cellIndex;
     cellIndex += 1;
-    return `<button type="button" class="proof-cell" data-proof-cell="${answer.slug}" data-proof-index="${current}" aria-label="Braille cell ${current + 1}">${renderBrailleCell(char)}</button>`;
+    const dots = brailleDotNumbers(char).join(", ") || "none";
+    return `<button type="button" class="proof-cell" data-proof-cell="${answer.slug}" data-proof-index="${current}" aria-label="Braille cell ${current + 1}: ${escapeHtml(char)}, dots ${dots}">${renderBrailleCell(char)}</button>`;
   }).join("");
   return { html, errorCell };
 }
@@ -593,13 +604,13 @@ function renderSinglePracticeQuestion(lesson, quiz, state, answer, options) {
   quiz.querySelector(".section-quiz-position").textContent = `${state.index + 1} of ${state.pool.length}`;
 
   if (type === "reading") {
-    body.innerHTML = `<div class="section-quiz-prompt"><span class="section-quiz-braille">${renderBrailleCells(answer.braille)}</span><span class="section-quiz-help">${regionalMode() ? `${ui("question", "Question")} ${state.index + 1} / ${state.pool.length}` : `${ui("question", "Question")} ${state.index + 1} of ${state.pool.length}`}</span></div><div class="section-quiz-choices">${options.map((item) => `<button type="button" data-lesson-answer="${lesson.slug}" data-answer="${item.print}">${item.print}</button>`).join("")}</div><p class="section-quiz-feedback">${ui("choose", "Choose an answer to begin.")}</p>`;
+    body.innerHTML = `<div class="section-quiz-prompt"><span class="section-quiz-braille">${renderBrailleCells(answer.braille)}</span><span class="section-quiz-help">${regionalMode() ? `${ui("question", "Question")} ${state.index + 1} / ${state.pool.length}` : `${ui("question", "Question")} ${state.index + 1} of ${state.pool.length}`}</span></div><div class="section-quiz-choices" role="group" aria-label="Answer choices">${options.map((item) => `<button type="button" data-lesson-answer="${lesson.slug}" data-answer="${item.print}">${item.print}</button>`).join("")}</div><p class="section-quiz-feedback" role="status" aria-live="polite" aria-atomic="true">${ui("choose", "Choose an answer to begin.")}</p>`;
     return;
   }
 
   if (type === "writing") {
     const cells = getBrailleCells(answer.braille);
-    body.innerHTML = `<p class="practice-prompt writing-prompt">Write: ${answer.print}</p><div class="writing-cells">${renderWritingCells(lesson.slug, cells, state.writing)}</div><button class="button secondary dark-text" type="button" data-check-writing="${lesson.slug}">Check writing</button><p class="writing-feedback">Select dots, then check writing.</p>`;
+    body.innerHTML = `<p class="practice-prompt writing-prompt">Write: ${answer.print}</p><div class="writing-cells">${renderWritingCells(lesson.slug, cells, state.writing)}</div><button class="button secondary dark-text" type="button" data-check-writing="${lesson.slug}">Check writing</button><p class="writing-feedback" role="status" aria-live="polite" aria-atomic="true">Select dots, then check writing.</p>`;
     return;
   }
 
@@ -636,6 +647,7 @@ function moveLessonQuestion(slug, direction) {
   const state = quizState.get(slug);
   state.index = Math.min(Math.max(state.index + direction, 0), state.pool.length - 1);
   state.writing = null;
+  state.answered = false;
   renderLessonQuestion(slug);
 }
 
@@ -644,9 +656,11 @@ function answerLessonQuestion(button) {
   const state = quizState.get(slug);
   const quiz = button.closest(".section-quiz");
   const answer = state.pool[state.index];
+  if (state.answered) return;
+  state.answered = true;
   const correct = button.dataset.answer === answer.print;
   [...quiz.querySelectorAll("[data-lesson-answer]")].forEach((choice) => {
-    choice.disabled = true;
+    choice.setAttribute("aria-disabled", "true");
     if (choice.dataset.answer === answer.print) choice.classList.add("correct");
   });
   if (!correct) button.classList.add("incorrect");
@@ -664,7 +678,9 @@ function toggleWritingDot(button) {
   else selected.add(dot);
   state.writing[cellIndex] = [...selected].sort((a, b) => a - b);
   quizState.set(slug, state);
-  renderLessonQuestion(slug);
+  const active = selected.has(dot);
+  button.classList.toggle("active", active);
+  button.setAttribute("aria-pressed", String(active));
 }
 
 function checkWriting(button) {
@@ -773,8 +789,14 @@ function renderAll() {
 if (courseKey) {
   chartButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      chartButtons.forEach((item) => item.classList.remove("active"));
+      chartButtons.forEach((item) => {
+        item.classList.remove("active");
+        item.setAttribute("aria-selected", "false");
+        item.setAttribute("tabindex", "-1");
+      });
       button.classList.add("active");
+      button.setAttribute("aria-selected", "true");
+      button.setAttribute("tabindex", "0");
       renderChart(button.dataset.chartFilter);
     });
   });

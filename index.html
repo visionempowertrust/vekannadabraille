@@ -18,6 +18,7 @@
       </a>
       <nav aria-label="Primary">
         <a href="#languages">Languages</a>
+        <a href="#braille-display">Braille display guide</a>
       </nav>
     </header>
 
@@ -25,10 +26,10 @@
       <section class="landing-hero" aria-labelledby="hero-title">
         <div class="landing-hero-copy">
           <p class="eyebrow">Bharati Braille sight learning</p>
-          <h1 id="hero-title">Choose a language to learn Braille by seeing</h1>
+          <h1 id="hero-title">Choose a language to learn Braille by sight or touch</h1>
           <p>
             Start with one script, move through the cells one at a time, then practice
-            recognition using six-dot visual braille cells.
+            recognition using six-dot visual cells or a refreshable Braille display.
           </p>
         </div>
         <div class="landing-braille" data-braille-render="⠃ ⠗ ⠁ ⠊ ⠇ ⠇ ⠑" aria-hidden="true"></div>
@@ -83,12 +84,33 @@
         </div>
       </section>
 
+      <section id="braille-display" class="section notes" aria-labelledby="braille-display-title">
+        <div class="section-heading">
+          <p class="eyebrow">Touch Braille</p>
+          <h2 id="braille-display-title">Using a refreshable Braille display</h2>
+          <p>
+            Connect the display in screen-reader mode, then open this site with a supported
+            screen reader. The lessons expose each Braille character and its dot numbers as text.
+          </p>
+        </div>
+        <ol class="objective-list">
+          <li>Connect the display by USB or Bluetooth and confirm it works with the screen reader.</li>
+          <li>Use heading and link navigation to choose a language and lesson.</li>
+          <li>Read the Unicode Braille cell by touch, followed by the announced dot numbers.</li>
+          <li>Activate answer, dot, Previous, and Next controls with the display's routing or activation commands.</li>
+        </ol>
+        <p>
+          The website does not connect directly to the hardware. JAWS, NVDA, VoiceOver, or
+          another screen reader sends the accessible page content to the Braille display.
+        </p>
+      </section>
+
       <section class="section notes" aria-labelledby="notes-title">
         <h2 id="notes-title">Teacher notes</h2>
         <div class="note-grid">
           <article>
             <h3>Shared method</h3>
-            <p>All courses use the same sight-learning structure and six-dot visual braille cells.</p>
+            <p>All courses use the same lesson structure with visual cells and refreshable Braille output.</p>
           </article>
           <article>
             <h3>Validation needed</h3>
@@ -107,6 +129,6 @@
       <a href="#top">Back to top</a>
     </footer>
 
-    <script src="multi-course.js?v=mixed-practice-20260617"></script>
+    <script src="multi-course.js?v=accessibility-20260618"></script>
   </body>
 </html>
