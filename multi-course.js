@@ -273,7 +273,7 @@ function displayDotLabel(dots) {
 function buildChart(data) {
   const vowels = data.vowels.map(([print, key]) => [print, key, brailleMap[key], dotsFor(brailleMap[key]), "vowel"]);
   const consonants = data.rows.flatMap((row) => row.items.map(([print, key]) => [print, key, brailleMap[key], dotsFor(brailleMap[key]), "consonant"]));
-  const marks = [[data.virama, "halant", brailleMap.virama, "4", "mark"], [data.anusvara, "anusvara", brailleMap.anusvara, "56", "mark"], [data.visarga, "visarga", brailleMap.visarga, "6", "mark"]];
+  const marks = [[data.virama, "halant", brailleMap.virama, dotsFor(brailleMap.virama), "mark"], [data.anusvara, "anusvara", brailleMap.anusvara, dotsFor(brailleMap.anusvara), "mark"], [data.visarga, "visarga", brailleMap.visarga, dotsFor(brailleMap.visarga), "mark"]];
   return [...vowels, ...consonants, ...marks];
 }
 

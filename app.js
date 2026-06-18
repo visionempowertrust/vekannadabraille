@@ -367,6 +367,13 @@ function displayDotLabel(dots) {
   return regionalMode() ? `• ${dots}` : `dots ${dots}`;
 }
 
+function dotsForBraille(value) {
+  return [...String(value)]
+    .filter(isBrailleChar)
+    .map((char) => brailleDotNumbers(char).join(""))
+    .join(", ");
+}
+
 function makeLanguageToggle() {
   const nav = document.querySelector("nav");
   if (!nav) return;
@@ -582,16 +589,19 @@ function renderLessonDetails() {
 function renderChart(filter = "all") {
   chartGrid.innerHTML = chart
     .filter((item) => filter === "all" || item[4] === filter)
-    .map(([print, label, braille, dots, group]) => `
-      <article class="chart-card" data-group="${group}">
-        <span class="chart-braille" aria-label="${displayDotLabel(dots)}">${renderBrailleCells(braille)}</span>
-        <div>
-          <h3>${print}</h3>
-          <p>${displayChartLabel(label, group)}</p>
-          <p>${displayDotLabel(dots)}</p>
-        </div>
-      </article>
-    `).join("");
+    .map(([print, label, braille, , group]) => {
+      const dots = dotsForBraille(braille);
+      return `
+        <article class="chart-card" data-group="${group}">
+          <span class="chart-braille" aria-label="${displayDotLabel(dots)}">${renderBrailleCells(braille)}</span>
+          <div>
+            <h3>${print}</h3>
+            <p>${displayChartLabel(label, group)}</p>
+            <p>${displayDotLabel(dots)}</p>
+          </div>
+        </article>
+      `;
+    }).join("");
 }
 
 function shuffle(items) {
