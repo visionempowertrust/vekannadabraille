@@ -61,6 +61,16 @@ textarea {
   text-decoration: none;
 }
 
+.brand-logo {
+  display: block;
+  width: clamp(140px, 18vw, 190px);
+  height: auto;
+}
+
+.landing-brand {
+  min-width: 0;
+}
+
 .brand-mark {
   display: grid;
   place-items: center;
@@ -1176,6 +1186,15 @@ textarea:focus {
     position: static;
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .landing-brand {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .landing-brand span {
+    line-height: 1.25;
   }
 
   nav {
